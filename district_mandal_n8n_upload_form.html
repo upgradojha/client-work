@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fffaf3" />
+  <title>जिला • मंडल • छवि अपलोड — n8n</title>
+  <style>
+    :root { color-scheme: light; --ink:#322632; --wine:#742d39; --wine-deep:#59222c; --muted:#756c6e; --border:#e9dbcd; --cream:#fffaf3; --green:#23694e; --red:#a53836; font-family:"Noto Sans Devanagari","Mangal","Nirmala UI",system-ui,-apple-system,sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; padding:32px 16px 50px; background:radial-gradient(ellipse at 12% 5%,#f0dfca 0,transparent 37%),radial-gradient(ellipse at 90% 90%,#f0e0d8 0,transparent 38%),#f8f5ef; color:var(--ink); }
+    .shell { width:min(100%,690px); margin:auto; }
+    .eyebrow { text-align:center; color:var(--wine); font-size:11px; letter-spacing:.15em; text-transform:uppercase; font-weight:850; margin:6px 0 13px; }
+    .card { border:1px solid #e9dcca; border-radius:24px; background:var(--cream); box-shadow:0 25px 64px #6a3e3214; padding:clamp(22px,5vw,38px); }
+    .ornament { text-align:center; color:#b6926c; font-size:23px; margin-bottom:8px; }
+    h1 { text-align:center; font-size:clamp(25px,4.5vw,34px); letter-spacing:-.025em; line-height:1.35; margin:0 0 7px; }
+    .subtitle { text-align:center; color:var(--muted); font-size:14px; line-height:1.75; margin:0 0 30px; }
+    .section-heading { display:flex; align-items:center; gap:10px; margin:28px 0 17px; font-weight:800; font-size:17px; }
+    .section-heading:first-of-type { margin-top:0; }
+    .number { background:#f0e3d8; color:var(--wine); border:1px solid #e5cec0; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; font-size:13px; flex-shrink:0; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
+    .field { margin-bottom:18px; min-width:0; }
+    .field label { display:block; font-weight:750; font-size:14px; margin:0 0 9px; }
+    .required { color:#ac3b3b; }
+    input[type=url], select { display:block; width:100%; min-height:51px; border:1px solid #d8c8ba; border-radius:12px; background:#fffdfa; font:inherit; font-size:15px; color:var(--ink); padding:11px 14px; outline:none; transition:box-shadow .18s,border-color .18s; }
+    input[type=url] { direction:ltr; }
+    input:focus-visible,select:focus-visible,button:focus-visible,.dropzone:focus-within { outline:none; box-shadow:0 0 0 4px #742d391b; border-color:var(--wine); }
+    select { appearance:none; padding-right:35px; cursor:pointer; }
+    select:disabled { background:#f4f0eb; color:#8d8984; cursor:not-allowed; }
+    .select-wrap { position:relative; }
+    .select-wrap:after { content:'⌄'; position:absolute; right:13px; top:50%; transform:translateY(-58%); color:var(--wine); pointer-events:none; font-size:23px; }
+    .hint { margin:7px 0 0; color:var(--muted); font-size:12px; line-height:1.55; }
+    .dropzone { border:2px dashed #c7aa9b; border-radius:18px; background:#fcf3e9; padding:25px 15px; text-align:center; position:relative; transition:background .2s,border-color .2s; }
+    .dropzone.dragging { background:#f6e3d5; border-color:var(--wine); }
+    .dropzone.disabled { opacity:.55; pointer-events:none; }
+    .dropzone input[type=file] { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+    .dropzone strong { display:block; color:var(--wine); font-size:17px; margin-bottom:4px; pointer-events:none; }
+    .dropzone p { margin:0; color:#81776c; font-size:12px; line-height:1.7; pointer-events:none; }
+    .upload-icon { font-size:29px; margin-bottom:10px; pointer-events:none; }
+    .counter { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0 9px; flex-wrap:wrap; font-size:12px; color:#7b6b61; }
+    .counter strong { color:var(--ink); }
+    .file-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .file-item { background:#fffdf8; border:1px solid var(--border); border-radius:13px; padding:8px; min-width:0; }
+    .thumb { display:block; height:105px; width:100%; border-radius:8px; object-fit:cover; background:#efe5dd; }
+    .file-info { display:flex; align-items:center; gap:5px; margin:8px 0 0; }
+    .file-label { flex:1; min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:11px; }
+    .remove { border:0; color:var(--red); cursor:pointer; border-radius:6px; background:#fff0ef; font-size:15px; line-height:1; width:25px; height:25px; flex-shrink:0; }
+    .note { background:#f3eae2; border:1px solid #e7d7c9; border-radius:11px; color:#73635e; font-size:12px; padding:12px; line-height:1.7; margin:11px 0 0; }
+    .preview { border:1px solid var(--border); background:#f7f0e9; padding:15px; border-radius:14px; margin:22px 0; }
+    .preview strong { display:block; font-size:12px; color:#7d6155; margin-bottom:7px; }
+    pre { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.6; margin:0; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:12px; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; }
+    button { font:inherit; font-size:14px; font-weight:750; min-height:48px; border-radius:12px; border:1px solid var(--wine); padding:11px 19px; cursor:pointer; }
+    button:disabled { cursor:not-allowed; opacity:.5; }
+    .primary { flex:1; background:var(--wine); color:white; }
+    .primary:not(:disabled):hover { background:var(--wine-deep); }
+    .secondary { background:transparent; color:var(--wine); }
+    .status { margin:15px 0 0; border-radius:12px; font-size:13px; padding:12px 14px; line-height:1.6; white-space:pre-wrap; display:none; }
+    .status.visible { display:block; }
+    .status.info { background:#eae8e6; color:#4f4542; }
+    .status.success { background:#e4f3e9; color:#1e6848; }
+    .status.error { background:#fceae7; color:#8a2827; }
+    .foot { text-align:center; font-size:12px; color:#8d7f75; margin:18px 0 0; }
+    .fineprint { font-size:12px; line-height:1.7; color:var(--muted); margin-top:12px; }
+    @media(max-width:560px){ .grid { grid-template-columns:1fr; gap:0; }.file-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.primary{flex-basis:100%;}.secondary{flex:1;} }
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="eyebrow">District • Mandal • Image Upload</div>
+    <section class="card" aria-labelledby="heading">
+      <div class="ornament" aria-hidden="true">✦</div>
+      <h1 id="heading">जिला एवं मंडल छवि अपलोड</h1>
+      <p class="subtitle">जिला चुनें, संबंधित मंडल चुनें और छवियाँ अपने n8n workflow में भेजें।</p>
+      <form id="uploadForm" novalidate>
+        <div class="section-heading"><span class="number">01</span> जिला एवं मंडल</div>
+        <div class="grid">
+          <div class="field">
+            <label for="district">जिला <span class="required">*</span></label>
+            <div class="select-wrap"><select id="district" name="जिला" required><option value="">जिला चुनें</option></select></div>
+          </div>
+          <div class="field">
+            <label for="mandal">मंडल <span class="required">*</span></label>
+            <div class="select-wrap"><select id="mandal" name="मंडल" required disabled><option value="">पहले जिला चुनें</option></select></div>
+            <p class="hint" id="mandalHint">जिला चुनते ही मंडल उपलब्ध होंगे।</p>
+          </div>
+        </div>
+        <div class="section-heading"><span class="number">02</span> छवियाँ अपलोड करें</div>
+        <div class="field">
+          <label for="images">तस्वीरें <span class="required">*</span></label>
+          <div class="dropzone" id="dropzone">
+            <div class="upload-icon" aria-hidden="true">▧</div>
+            <strong>तस्वीरें चुनें या यहाँ Drop करें</strong>
+            <p>JPG, PNG, WebP • एक बार में अधिकतम 20 तस्वीरें<br>कुल request में अधिकतम 14 MB</p>
+            <input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-label="तस्वीरें चुनें" />
+          </div>
+          <div class="counter"><span id="fileCount">कोई तस्वीर नहीं चुनी गई</span><span id="fileSize">0 MB / 14 MB</span></div>
+          <div class="file-grid" id="fileGrid" aria-live="polite"></div>
+          <p class="hint">बेहतर Hindi OCR के लिए स्पष्ट, सीधी और पढ़ने योग्य फोटो चुनें। बड़ी संख्या में फोटो छोटे batches में भेजें।</p>
+        </div>
+        <div class="section-heading"><span class="number">03</span> n8n Webhook</div>
+        <div class="field">
+          <label for="webhook">Webhook URL <span class="required">*</span></label>
+          <input id="webhook" type="url" required inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://your-n8n-domain/webhook/your-path" />
+          <p class="hint">n8n Webhook node का Test या Production POST URL पेस्ट करें। URL इस HTML फ़ाइल में hard-code नहीं किया गया है।</p>
+        </div>
+        <div class="preview" aria-live="polite">
+          <strong>Webhook पर भेजा जाने वाला डेटा — Preview</strong>
+          <pre id="payloadPreview"></pre>
+        </div>
+        <div class="actions">
+          <button class="primary" id="sendBtn" type="submit" disabled>n8n पर भेजें</button>
+          <button class="secondary" id="cancelBtn" type="button" hidden>रोकें</button>
+          <button class="secondary" id="clearBtn" type="button">छवियाँ हटाएँ</button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+        <p class="fineprint">Images सीधे n8n को भेजी जाएँगी। ImageKit upload और बाकी processing आपके n8n workflow के अंदर होगी।</p>
+      </form>
+    </section>
+    <p class="foot" id="totals"></p>
+  </main>
+  <script>
+    'use strict';
+    const districtMandals = {
+  "शाहदरा": [
+    "पांडव नगर",
+    "दिलशाद कॉलोनी",
+    "आनंद विहार",
+    "झिलमिल",
+    "शकरपुर",
+    "विश्वास नगर",
+    "प्रीत विहार",
+    "गांधी नगर",
+    "आजाद नगर",
+    "शास्त्री पार्क",
+    "कृष्णा नगर",
+    "ललिता पार्क",
+    "लक्ष्मी नगर",
+    "आई.पी. एक्सटेंशन",
+    "अनारकली",
+    "जगतपुरी",
+    "गीता कॉलोनी",
+    "शाहदरा"
+  ],
+  "नई दिल्ली": [
+    "मालवीय नगर",
+    "मुनिरका",
+    "चिराग दिल्ली",
+    "नई दिल्ली",
+    "तीन मूर्ति",
+    "अमर कॉलोनी",
+    "आर.के. पुरम",
+    "सी.आर. पार्क",
+    "सरोजनी नगर",
+    "एंड्र्यूज़ गंज",
+    "कोटला मुबारकपुर",
+    "ग्रीन पार्क",
+    "हौज खास",
+    "वसंत विहार",
+    "ग्रेटर कैलाश"
+  ],
+  "दक्षिणी दिल्ली": [
+    "168 संगम विहार सी",
+    "कालकाजी",
+    "संगम विहार-B",
+    "संगम विहार-A",
+    "पुल प्रह्लादपुर",
+    "तुगलकाबाद",
+    "बदरपुर",
+    "मोलड़बंद",
+    "गोविंदपुरी",
+    "जैतपुर",
+    "देवली",
+    "तिगड़ी",
+    "दक्षिणपुरी",
+    "तुगलकाबाद विस्तार",
+    "श्रीनिवासपुरी",
+    "हरकेश नगर",
+    "मीठापुर",
+    "हरिनगर"
+  ],
+  "पश्चिमी दिल्ली": [
+    "विष्णु गार्डन",
+    "पंजाबी बाग",
+    "मादीपुर",
+    "रघुबीर नगर",
+    "राजौरी गार्डन",
+    "चौखंडी नगर",
+    "सुभाष नगर",
+    "हरि नगर",
+    "फतेह नगर",
+    "तिलक नगर",
+    "ख्याला",
+    "केशोपुर",
+    "जनकपुरी साउथ",
+    "महावीर एन्क्लेव",
+    "जनकपुरी वेस्ट"
+  ],
+  "नजफगढ़": [
+    "मंगलापुरी",
+    "नंगली सकरावती",
+    "ककरोला",
+    "बापरौला",
+    "बिन्दापुर",
+    "मोहन गार्डन",
+    "नजफगढ़",
+    "हस्तसाल",
+    "रौशनपुरा",
+    "कुंवर सिंह नगर",
+    "विकासपुरी",
+    "नवादा",
+    "द्वारका ए",
+    "सैनिक एन्क्लेव",
+    "सागरपुर",
+    "विकास नगर",
+    "उत्तम नगर",
+    "द्वारका बी",
+    "मटियाला",
+    "छावला",
+    "ईशापुर",
+    "दिचाऊँ कलां"
+  ],
+  "चाँदनी चौक": [
+    "कमला नगर",
+    "चांदनी चौक",
+    "सिविल लाइन",
+    "संगम पार्क",
+    "राम नगर",
+    "शास्त्री नगर",
+    "सदर बाजार",
+    "दिल्ली गेट",
+    "मॉडल टाउन",
+    "किशनगंज",
+    "बाजार सीता राम",
+    "कुरैश नगर"
+  ],
+  "केशवपुरम": [
+    "धीरपुर",
+    "आजादपुर",
+    "शालीमार बाग ए",
+    "रानी बाग",
+    "वजीरपुर",
+    "शालीमार बाग बी",
+    "अशोक विहार",
+    "आदर्श नगर",
+    "केशवपुरम",
+    "पश्चिम विहार",
+    "पीतमपुरा",
+    "सरस्वती विहार",
+    "कोहाट एन्क्लेव",
+    "शकूरपुर",
+    "त्रिनगर"
+  ]
+};
+    const MAX_IMAGES = 20;
+    const MAX_TOTAL_BYTES = 14 * 1024 * 1024; // n8n default Webhook limit is 16MB; reserve space for multipart metadata.
+    const TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+    const $ = id => document.getElementById(id);
+    const district = $('district');
+    const mandal = $('mandal');
+    const imagePicker = $('images');
+    const form = $('uploadForm');
+    const statusBox = $('status');
+    let selected = [];
+    let sending = false;
+    let abortController = null;
+
+    function addOption(select,value,label){ const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option); }
+    Object.keys(districtMandals).forEach(name=>addOption(district,name,name));
+    $('totals').textContent = `${Object.keys(districtMandals).length} जिले • ${Object.values(districtMandals).reduce((sum,list)=>sum+list.length,0)} मंडल`;
+
+    function message(text,type='info') { statusBox.textContent=text; statusBox.className='status visible '+type; }
+    function clearMessage(){statusBox.className='status';statusBox.textContent='';}
+    function totalBytes(){return selected.reduce((n,s)=>n+s.file.size,0)}
+    function prettyBytes(bytes){return (bytes/1024/1024).toFixed(2)+' MB'}
+    function validSelection(){return district.value && (districtMandals[district.value]||[]).includes(mandal.value);}
+    function ready(){return Boolean(validSelection() && selected.length && !sending && $('webhook').value.trim());}
+
+    function update(){
+      $('fileCount').textContent=selected.length ? `${selected.length} तस्वीर${selected.length===1?'':'ें'} चुनी गईं` : 'कोई तस्वीर नहीं चुनी गई';
+      $('fileSize').textContent=`${prettyBytes(totalBytes())} / 14 MB`;
+      $('sendBtn').disabled=!ready();
+      $('clearBtn').disabled=!selected.length || sending;
+      const metadata = {'जिला':district.value,'मंडल':mandal.value,'image_count':selected.length,'images':selected.map((entry,i)=>({field:`image_${i+1}`,file:entry.file.name,size:prettyBytes(entry.file.size)}))};
+      $('payloadPreview').textContent=JSON.stringify(metadata,null,2);
+    }
+
+    function renderFiles(){
+      const grid=$('fileGrid'); grid.replaceChildren();
+      selected.forEach((entry)=>{
+        const item=document.createElement('div'); item.className='file-item';
+        const thumb=document.createElement('img');thumb.className='thumb';thumb.src=entry.url;thumb.alt=entry.file.name;thumb.loading='lazy';
+        const info=document.createElement('div');info.className='file-info';
+        const label=document.createElement('span');label.className='file-label';label.textContent=entry.file.name;label.title=entry.file.name;
+        const remove=document.createElement('button');remove.type='button';remove.className='remove';remove.textContent='×';remove.disabled=sending;remove.setAttribute('aria-label',`${entry.file.name} हटाएँ`);
+        remove.addEventListener('click',()=>{ if(sending) return; URL.revokeObjectURL(entry.url); selected=selected.filter(e=>e!==entry);renderFiles();update();clearMessage(); });
+        info.append(label,remove);item.append(thumb,info);grid.append(item);
+      });
+    }
+    function addFiles(files){
+      if(sending) return;
+      let skipped=0; let invalid=0;let exceeded=false;let tooMany=false;
+      for(const file of files){
+        if(!TYPES.has(file.type)){invalid++;continue;}
+        const duplicate=selected.some(e=>e.file.name===file.name && e.file.size===file.size && e.file.lastModified===file.lastModified);
+        if(duplicate){skipped++;continue;}
+        if(selected.length>=MAX_IMAGES){tooMany=true;break;}
+        if(totalBytes()+file.size>MAX_TOTAL_BYTES){exceeded=true;continue;}
+        selected.push({file,url:URL.createObjectURL(file)});
+      }
+      renderFiles();update();
+      const notes=[];
+      if(invalid)notes.push(`${invalid} फ़ाइलें छोड़ी गईं — केवल JPG, PNG, WebP स्वीकार हैं।`);
+      if(skipped)notes.push(`${skipped} duplicate फ़ाइलें नहीं जोड़ी गईं।`);
+      if(exceeded)notes.push('कुछ तस्वीरें 14 MB की सीमा के कारण नहीं जोड़ी गईं। छोटे batches बनाएँ।');
+      if(tooMany)notes.push('अधिकतम 20 तस्वीरें एक बार में भेज सकते हैं।');
+      if(notes.length)message(notes.join('\n'),'error');else clearMessage();
+    }
+    function clearFiles(){selected.forEach(e=>URL.revokeObjectURL(e.url));selected=[];imagePicker.value='';renderFiles();update();}
+
+    district.addEventListener('change',()=>{
+      mandal.replaceChildren();const list=districtMandals[district.value]||[];
+      addOption(mandal,'',list.length?'मंडल चुनें':'पहले जिला चुनें');list.forEach(name=>addOption(mandal,name,name));
+      mandal.disabled=!list.length;
+      $('mandalHint').textContent=list.length?`${district.value} में ${list.length} मंडल उपलब्ध हैं।`:'जिला चुनते ही मंडल उपलब्ध होंगे।';
+      update();clearMessage();
+    });
+    mandal.addEventListener('change',()=>{update();clearMessage();});
+    $('webhook').addEventListener('input',update);
+    imagePicker.addEventListener('change',event=>{addFiles([...event.target.files]);imagePicker.value='';});
+    $('clearBtn').addEventListener('click',()=>{clearFiles();clearMessage();});
+    const dropzone=$('dropzone');
+    for(const type of ['dragenter','dragover']) dropzone.addEventListener(type,event=>{event.preventDefault();if(!sending)dropzone.classList.add('dragging');});
+    for(const type of ['dragleave','drop']) dropzone.addEventListener(type,event=>{event.preventDefault();dropzone.classList.remove('dragging');});
+    dropzone.addEventListener('drop',event=>{if(!sending)addFiles([...event.dataTransfer.files]);});
+    $('cancelBtn').addEventListener('click',()=>{if(abortController)abortController.abort();});
+
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      if(sending)return;
+      if(!validSelection()){message('कृपया सही जिला और मंडल चुनें।','error');return;}
+      if(!selected.length){message('कम से कम एक तस्वीर चुनें।','error');return;}
+      if(totalBytes()>MAX_TOTAL_BYTES){message('फ़ाइलें 14 MB से बड़ी हैं।','error');return;}
+      let url;
+      try {url=new URL($('webhook').value.trim()); if(!['https:','http:'].includes(url.protocol))throw new Error('Invalid protocol');}
+      catch{message('कृपया सही n8n webhook URL डालें।','error');return;}
+      if(url.protocol==='http:' && !['localhost','127.0.0.1'].includes(url.hostname)){
+        message('सुरक्षा के लिए HTTPS Webhook URL इस्तेमाल करें।','error');return;
+      }
+      const data=new FormData();
+      data.append('जिला',district.value);
+      data.append('मंडल',mandal.value);
+      data.append('image_count',String(selected.length));
+      data.append('submitted_at',new Date().toISOString());
+      // Use unique binary field names: n8n can loop over Object.entries($binary).
+      selected.forEach((entry,index)=>data.append(`image_${index+1}`,entry.file,entry.file.name));
+      sending=true;abortController=new AbortController();
+      $('sendBtn').textContent='भेजा जा रहा है…';$('cancelBtn').hidden=false;
+      district.disabled=true;mandal.disabled=true;imagePicker.disabled=true;$('webhook').disabled=true;
+      dropzone.classList.add('disabled');renderFiles();update();
+      message('तस्वीरें n8n webhook पर भेजी जा रही हैं। कृपया इस टैब को बंद न करें।','info');
+      try {
+        // Never set Content-Type manually; the browser must generate the multipart boundary.
+        const response=await fetch(url.href,{method:'POST',body:data,signal:abortController.signal,mode:'cors'});
+        const responseText=await response.text();
+        if(!response.ok)throw new Error(`HTTP ${response.status}${responseText ? ': '+responseText.slice(0,220):''}`);
+        // HTTP success indicates webhook acceptance, NOT completion of downstream ImageKit jobs.
+        clearFiles();
+        message('✓ n8n webhook ने आपकी request स्वीकार कर ली। ImageKit upload और अन्य processing workflow के अंदर होगी।','success');
+      }catch(error){
+        if(error.name==='AbortError')message('Upload request रद्द कर दी गई। आपकी चुनी गई तस्वीरें बनी हुई हैं।','info');
+        else if(error instanceof TypeError)message('Webhook से connection नहीं बन पाया। URL, n8n workflow, HTTPS और CORS settings जाँचें। यदि आपने HTML local file से खोली है तो वेबसाइट/localhost पर होस्ट करके भी जाँचें।','error');
+        else message('n8n ने request स्वीकार नहीं की: '+error.message,'error');
+      }finally{
+        sending=false;abortController=null;
+        $('sendBtn').textContent='n8n पर भेजें';$('cancelBtn').hidden=true;
+        district.disabled=false;mandal.disabled=!district.value;imagePicker.disabled=false;$('webhook').disabled=false;
+        dropzone.classList.remove('disabled');renderFiles();update();
+      }
+    });
+    update();
+  </script>
+</body>
+</html>
