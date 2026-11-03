@@ -586,6 +586,8 @@ const fileInput = $('images');
 let images = [];
 let sending = false;
 let controller = null;
+/* Values sent to n8n: English only, spaces replaced by underscores */
+const toEnglishValue = value => String(value || '').trim().replace(/\s+/g, '_');
 const option = (target, value, label) => {
   const item = document.createElement('option');
   item.value = value;
@@ -611,8 +613,8 @@ function refresh() {
   $('sendBtn').disabled = !ready();
   $('clearBtn').disabled = !images.length || sending;
   const payloadPreview = {
-    district: districtSelect.value,
-    mandal: mandalSelect.value,
+    district: toEnglishValue(districtSelect.value),
+    mandal: toEnglishValue(mandalSelect.value),
     image_count: images.length,
     image_fields: images.map((item, i) => ({ field: `image_${i+1}`, filename: item.file.name }))
   };
@@ -685,8 +687,9 @@ $('uploadForm').addEventListener('submit', async e => {
   } catch { status('Valid HTTPS n8n Webhook URL दर्ज करें।', 'error'); return; }
   const data = new FormData();
   // All district and mandal values AND field names are in English.
-  data.append('district', districtSelect.value);
-  data.append('mandal', mandalSelect.value);
+  // Spaces in district/mandal values are replaced with underscores (e.g. "New_Delhi", "Pandav_Nagar").
+  data.append('district', toEnglishValue(districtSelect.value));
+  data.append('mandal', toEnglishValue(mandalSelect.value));
   data.append('image_count', String(images.length));
   data.append('submitted_at', new Date().toISOString());
   images.forEach((entry, index) => data.append(`image_${index + 1}`, entry.file, entry.file.name));
