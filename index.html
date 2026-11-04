@@ -1,790 +1,718 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#131b28" />
-  <meta name="author" content="Aryan Upadhayay" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23151c29'/%3E%3Crect x='9' y='9' width='46' height='46' rx='13' fill='%23c3f0d9'/%3E%3Ctext x='31' y='41' fill='%23173c32' font-size='23' font-weight='800' letter-spacing='-2' text-anchor='middle' font-family='Arial,sans-serif'%3EAU%3C/text%3E%3Ccircle cx='54' cy='45' r='5' fill='%23f0bca9'/%3E%3C/svg%3E" />
-  <meta name="description" content="A refined district and mandal data-entry form with photo attachments, designed by Aryan Upadhayay." />
-  <title>District Photo Records — Aryan Upadhayay</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>District & Mandal Image Upload | n8n</title>
   <style>
-    :root {
-      --navy: #151c29;
-      --navy-soft: #222c3c;
-      --ink: #182033;
-      --muted: #747989;
-      --sand: #f5f4f0;
-      --panel: #fcfbf8;
-      --line: #e9e9e6;
-      --accent: #5964f2;
-      --accent-dark: #454fe4;
-      --mint: #c3f0d9;
-      --peach: #f0bca9;
-      --danger: #bb3d4a;
-      --radius-lg: 30px;
-      font-family: "Manrope", "Noto Sans Devanagari", system-ui, sans-serif;
-      color: var(--ink);
-      font-synthesis: none;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; min-width: 320px; background: #e8e9e8; }
-    button, input { font: inherit; }
-    button { -webkit-tap-highlight-color: transparent; }
-    button:focus-visible, input:focus-visible, .dropzone:focus-visible, .deck-stage:focus-visible {
-      outline: 3px solid rgba(89,100,242,.46);
-      outline-offset: 3px;
-    }
-    [hidden] { display: none !important; }
-    ::selection { background: #d9dcff; color: #1c246a; }
-    .shell {
-      width: min(1540px, calc(100% - 48px));
-      min-height: min(940px, calc(100dvh - 48px));
-      margin: 24px auto;
-      display: grid;
-      grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
-      background: var(--panel);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 32px 100px rgba(18,26,41,.12);
-      overflow: clip;
-      isolation: isolate;
-    }
-    .showcase {
-      position: relative;
-      overflow: hidden;
-      min-height: 790px;
-      color: white;
-      background: radial-gradient(circle at 73% 28%, #354459 0%, rgba(53,68,89,0) 44%), linear-gradient(155deg, #202b3c 0%, #131b28 66%, #101721 100%);
-      padding: clamp(30px, 3.8vw, 58px);
-      display: flex;
-      flex-direction: column;
-    }
-    .showcase::after { content: ""; pointer-events: none; position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='.08' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: .35; mix-blend-mode: screen;
-    }
-    .showcase::before { content:""; position:absolute; width:570px; height:570px; border:1px solid rgba(255,255,255,.075); border-radius:50%; left: 50%; top: 12%; transform: translateX(-50%); pointer-events:none; }
-    .showcase-head, .showcase-foot { position: relative; z-index: 2; }
-    .showcase-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-    .brand { display:inline-flex; align-items:center; gap:12px; color:#fff; min-width:0; }
-    .au-mark { position:relative; display:grid; place-items:center; flex:none; width:45px; height:45px; border-radius:14px; background:linear-gradient(140deg,#d5f6e5,#a2dbc0); border:1px solid #e6fff2; box-shadow:0 10px 24px #7de3b228, inset 0 1px 0 #fff9; transform:rotate(-8deg); }
-    .au-mark b { color:#173c32; font:800 21px/1 "Manrope",sans-serif; letter-spacing:-.12em; margin-left:-3px; transform:rotate(8deg); }
-    .au-mark::after { content:""; position:absolute; width:9px; height:9px; right:-4px; bottom:5px; background:var(--peach); border:2px solid #192434; border-radius:50%; }
-    .brand-copy { display:flex; flex-direction:column; min-width:0; gap:4px; }
-    .brand-copy strong { font-size:13px; font-weight:800; letter-spacing:-.065em; line-height:1; white-space:nowrap; }
-    .brand-copy strong span { color:var(--mint); padding:0 2px; }
-    .brand-copy small { font-size:8px; font-weight:800; letter-spacing:.17em; color:#b5c4cd; white-space:nowrap; }
-    .github-chip { display:inline-flex; align-items:center; justify-content:center; flex:none; gap:8px; min-height:36px; padding:9px 12px; border:1px solid #ffffff2b; background:#ffffff0a; border-radius:100px; text-decoration:none; color:#e8f1f4; font:800 10px/1 "Manrope",sans-serif; transition:border-color .2s,background .2s,transform .2s; }
-    .github-chip:hover { background:#ffffff1c; border-color:#b6e5ce; transform:translateY(-2px); }
-    .github-chip:focus-visible, .credit-link:focus-visible { outline:3px solid #c3f0d9; outline-offset:3px; }
-    .github-chip svg { display:block; flex:none; }
-    .showcase-visual { position:absolute; top: 10%; left: 0; width: 100%; height: 68%; pointer-events:none; }
-    #threeCanvas { position:absolute; inset:0; width:100%; height:100%; display:block; opacity:0; transition:opacity .65s ease; }
-    .showcase-visual.webgl-ready #threeCanvas { opacity: 1; }
-    .fallback-stack { position:absolute; width:230px; height:285px; left:50%; top:51%; transform:translate(-50%, -50%) rotate(-7deg); filter: drop-shadow(0 24px 30px rgba(0,0,0,.25)); transition:opacity .4s ease; }
-    .fallback-stack i { position:absolute; inset:0; border-radius:22px; border:10px solid #ebdbd0; background:linear-gradient(140deg,#e2c7ad,#e0a58d 52%,#465c61 53%,#244351); transform:translate(-40px,20px) rotate(-17deg); }
-    .fallback-stack i:nth-child(2) { border-color:#d3dcdf; background:linear-gradient(150deg,#a6c2ba,#55738a); transform:translate(40px,12px) rotate(14deg); }
-    .fallback-stack i:nth-child(3) { border-color:#fbf0e3; background:linear-gradient(145deg,#b9b9de 0%,#e8d0be 45%,#b97565 46%,#485d67); transform:rotate(0); }
-    .showcase-visual.webgl-ready .fallback-stack { opacity: 0; }
-    .orbit-label { position:absolute; z-index:1; top:14%; right:9%; color:#a5b0c2; font-size:10px; letter-spacing:.22em; transform:rotate(90deg) translateX(80%); transform-origin:right top; }
-    .showcase-foot { margin-top:auto; }
-    .eyebrow { margin: 0; text-transform:uppercase; font-weight:800; letter-spacing:.16em; font-size:10px; }
-    .showcase-foot .eyebrow { color:var(--mint); display:flex; align-items:center; gap:10px; }
-    .showcase-foot .eyebrow::before { content:""; width:22px; height:1px; background:var(--mint); display:block; }
-    .hero-title { font-weight:800; font-size: clamp(44px, 5.3vw, 80px); letter-spacing:-.085em; line-height:1.09; margin:19px 0 17px; }
-    .hero-title em { font-style:normal; color:var(--mint); }
-    .hero-desc { font-family: "DM Sans", "Noto Sans Devanagari", sans-serif; line-height:1.8; font-size:14px; color:#bac5d3; max-width:330px; margin:0; }
-    .showcase-rule { border:0; border-top: 1px solid rgba(255,255,255,.16); margin:37px 0 21px; }
-    .showcase-meta { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#a3afbf; font-weight:600; letter-spacing:.02em; font-size:11px; }
-    .showcase-meta strong { color:#e4eaf1; font-weight:700; }
-    .dot-group { display:flex; gap:6px; }
-    .dot-group i { width:6px; height:6px; background:#4f5c70; border-radius:50%; }
-    .dot-group i:first-child { width:19px; background:var(--mint); border-radius:10px; }
-    .workspace { padding: clamp(32px, 4vw, 65px) clamp(27px, 4.4vw, 74px) 34px; min-width:0; }
-    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: clamp(36px, 4.4vw, 66px); }
-    .topbar .eyebrow { color:#7f8493; letter-spacing:.12em; }
-    .topbar-pill { display:flex; align-items:center; gap:7px; font-size:10px; font-weight:800; color:#4a5671; letter-spacing:.03em; padding:10px 13px; border:1px solid #e4e5e6; border-radius:20px; background:#fff; white-space:nowrap; }
-    .topbar-pill i { width:7px; height:7px; border-radius:50%; background:#72c9a0; }
-    .intro-kicker { font-size:10px; color:var(--accent); font-weight:800; letter-spacing:.18em; text-transform:uppercase; display:flex; align-items:center; gap:10px; }
-    .intro-kicker span { width:24px; height:1px; background:var(--accent); }
-    h1 { font-size:clamp(35px, 3.3vw, 53px); line-height:1.16; letter-spacing:-.073em; font-weight:800; margin:15px 0 13px; text-wrap:balance; }
-    .intro { color:var(--muted); font-size:14px; line-height:1.85; margin:0; }
-    .form-flow { margin-top: 39px; }
-    .section-heading { display:flex; align-items:center; gap:15px; margin-bottom:23px; }
-    .section-num { flex:none; width:41px; height:41px; display:grid; place-items:center; border-radius:13px; color:var(--accent); background:#edeeff; font-family:"DM Sans",sans-serif; font-weight:800; font-size:13px; }
-    .section-heading h2 { font-size:16px; letter-spacing:-.045em; line-height:1.3; margin:0; font-weight:800; }
-    .section-heading p { color:#9a9ba6; font-size:11px; margin:4px 0 0; line-height:1.4; }
-    .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
-    .field { position:relative; min-width:0; }
-    .field-label { display:block; font-weight:800; font-size:12px; margin:0 0 10px; color:#30384a; }
-    .field-label span { color:#a0a2ab; font-weight:600; font-size:10px; margin-left:5px; }
-    .selector { position:relative; min-width:0; }
-    .select-trigger { width:100%; padding:11px 12px 11px 13px; display:flex; gap:11px; align-items:center; text-align:left; height:63px; border:1px solid #e4e5e8; background:#fff; border-radius:14px; cursor:pointer; color:var(--ink); transition:border-color .2s,box-shadow .2s,transform .2s; }
-    .select-trigger:not(:disabled):hover { border-color:#adb4fc; }
-    .select-trigger[aria-expanded="true"] { border-color:var(--accent); box-shadow:0 0 0 4px #5865ee17; }
-    .select-trigger:disabled { cursor:not-allowed; background:#f4f4f4; color:#a0a4b0; }
-    .select-symbol { flex:none; height:34px; width:34px; background:#f4f5ff; display:grid;place-items:center; border-radius:10px; color:var(--accent); }
-    .select-trigger:disabled .select-symbol { color:#9b9fab; background:#eaeaec; }
-    .select-text { min-width:0; flex:1; display:flex; flex-direction:column; justify-content:center; gap:1px; }
-    .select-name { font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.7; }
-    .select-sub { color:#9296a3; font-size:10px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .chevron { flex:none; color:#6e7483; transition: transform .2s; }
-    .select-trigger[aria-expanded="true"] .chevron { transform:rotate(180deg); }
-    .select-popover { position:absolute; left:0; right:0; top:calc(100% + 7px); background:#fff; z-index:30; border:1px solid #e6e8f0; border-radius:17px; padding:9px; box-shadow:0 20px 45px rgba(29,40,65,.17); animation:pop .17s ease both; }
-    @keyframes pop { from { opacity:0; transform:translateY(-5px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
-    .search-wrap { display:flex; align-items:center; gap:8px; background:#f5f6f9; padding:0 12px; border:1px solid transparent; border-radius:10px; color:#818898; }
-    .search-wrap:focus-within { border-color:#bdc2ff; background:white; }
-    .search-wrap input { display:block; border:0; background:transparent; color:var(--ink); width:100%; height:39px; outline:0; min-width:0; font-size:12px; }
-    .search-wrap input::placeholder { color:#a0a4b1; }
-    .option-list { overflow:auto; max-height:235px; padding-top:6px; overscroll-behavior:contain; scrollbar-color:#d6d9e2 transparent; scrollbar-width:thin; }
-    .option { width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; text-align:left; padding:11px 10px; border:0; border-radius:10px; color:#273248; background:transparent; cursor:pointer; }
-    .option:hover, .option:focus-visible, .option.active-option { background:#f0f2ff; outline:none; }
-    .option-name { display:flex; flex-direction:column; gap:2px; min-width:0; }
-    .option-name strong { font-size:12px; font-weight:800; }
-    .option-name small { color:#858b9a; font-size:10px; font-weight:600; }
-    .option-mark { color:var(--accent); flex:none; }
-    .empty-list { color:var(--muted); font-size:12px; text-align:center; padding:24px 8px; }
-    .helper { margin:10px 0 0; color:#9095a3; font-size:11px; line-height:1.5; }
-    .section-divider { border:0; border-top:1px solid var(--line); margin:30px 0 31px; }
-    .dropzone { border:1.5px dashed #cbd0df; padding:25px 18px; border-radius:18px; background:radial-gradient(circle at 0% 0%, #f0f2ff 0, transparent 48%),linear-gradient(135deg,#fafaff,#f8f8fb); text-align:center; position:relative; cursor:pointer; display:flex; align-items:center; flex-direction:column; min-height:208px; justify-content:center; transition:all .22s ease; }
-    .dropzone:hover, .dropzone.dragging { border-color:var(--accent); background:#f0f1ff; box-shadow:inset 0 0 0 1px #abb3ff; transform:translateY(-1px); }
-    .dropzone.disabled { cursor:default; opacity:.65; pointer-events:none; }
-    .upload-symbol { height:45px; width:45px; display:grid; place-items:center; border-radius:15px; background:white; border:1px solid #eceeff; box-shadow:0 6px 16px #515cd016; color:var(--accent); margin-bottom:12px; }
-    .drop-title { font-size:14px; font-weight:800; letter-spacing:-.035em; }
-    .drop-sub { color:#9599a6; font-size:11px; font-weight:600; line-height:1.5; margin:5px 0 12px; }
-    .browse-btn { background:#fff; border:1px solid #dedff0; color:var(--accent-dark); font-size:11px; font-weight:800; min-height:34px; border-radius:9px; padding:8px 14px; cursor:pointer; transition:transform .15s,background .15s; }
-    .browse-btn:hover { background:#e8eaff; transform:translateY(-1px); }
-    .upload-meta { display:flex; justify-content:space-between; gap:12px; margin-top:14px; color:#8b90a0; font-size:10px; font-weight:700; }
-    .usage-track { height:5px; overflow:hidden; border-radius:10px; background:#e9eaf0; margin-top:10px; }
-    .usage-track i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#828cff,#5561ea); border-radius:10px; transition:width .3s ease; }
-    .deck-module { padding:21px 0 0; }
-    .deck-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:3px; }
-    .deck-heading strong { font-size:14px; font-weight:800; letter-spacing:-.045em; }
-    .deck-heading p { font-size:11px; color:var(--muted); line-height:1.6; margin:4px 0 0; }
-    .clear-link { border:0; color:#858b9a; padding:4px; background:none; cursor:pointer; font-size:11px; font-weight:800; white-space:nowrap; }
-    .clear-link:hover { color:var(--danger); }
-    .deck-gallery { position:relative; display:flex; justify-content:center; align-items:center; gap:16px; min-height:335px; margin:4px 0; }
-    .deck-stage { width:min(100%, 350px); height:290px; position:relative; perspective:1100px; touch-action:pan-y; flex:none; outline-offset:7px; }
-    .stack-card { position:absolute; inset:20px 18px 14px; padding:8px; border-radius:18px; border:1px solid #e7e8ee; background:#fff; box-shadow:0 18px 30px rgba(29,38,61,.14); overflow:hidden; pointer-events:none; transition:transform .36s cubic-bezier(.2,.8,.2,1), opacity .22s ease; backface-visibility:hidden; }
-    .stack-card.back { background:#e4e6f8; transform:translate(30px, -8px) rotate(9deg) scale(.94); opacity:.86; }
-    .stack-card.mid { background:#d8e9df; transform:translate(-28px, -4px) rotate(-9deg) scale(.96); opacity:.96; }
-    .stack-card.front { transform:translate3d(0,0,40px) rotate(0deg); box-shadow:0 22px 42px #17213c35; }
-    .stack-card img { height:100%; width:100%; border-radius:12px; object-fit:cover; background:#dfe3eb; display:block; }
-    .stack-card.back img, .stack-card.mid img { opacity:.72; }
-    .deck-stage:hover .stack-card.mid { transform:translate(-36px,-6px) rotate(-12deg) scale(.96); }
-    .deck-stage:hover .stack-card.back { transform:translate(36px,-11px) rotate(12deg) scale(.94); }
-    .photo-counter { position:absolute; bottom:29px; right:31px; z-index:3; background:rgba(19,27,40,.8); color:white; padding:7px 10px; font:800 10px "DM Sans",sans-serif; border-radius:100px; backdrop-filter:blur(10px); }
-    .deck-nav { display:grid; place-items:center; width:34px; height:34px; flex:none; background:#fff; border:1px solid #e5e7f0; border-radius:50%; box-shadow:0 6px 16px #0f18300a; color:#46516a; cursor:pointer; transition:transform .15s, border .15s; }
-    .deck-nav:not(:disabled):hover { transform:translateY(-2px); border-color:#9da6ff; }
-    .deck-nav:disabled { opacity:.4; cursor:not-allowed; }
-    .deck-bottom { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:3px; }
-    .filename { font-size:11px; color:#606778; font-weight:700; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; min-width:0; flex:1; }
-    .remove-current { display:flex; align-items:center; gap:5px; color:#b44b5c; border:1px solid #f4d9df; background:#fff6f7; border-radius:9px; padding:7px 9px; font-size:10px; cursor:pointer; font-weight:800; white-space:nowrap; }
-    .remove-current:hover { background:#fce8eb; }
-    .thumb-strip { display:flex; gap:9px; overflow-x:auto; padding:13px 2px 7px; scrollbar-width:thin; scrollbar-color:#d5d8df transparent; scroll-snap-type:x proximity; }
-    .thumb { flex:none; position:relative; height:60px; width:63px; border:2px solid transparent; padding:3px; background:white; border-radius:11px; cursor:pointer; scroll-snap-align:start; }
-    .thumb.active { border-color:var(--accent); }
-    .thumb img { width:100%; height:100%; object-fit:cover; border-radius:6px; display:block; }
-    .thumb span { position:absolute; right:0; bottom:0; border-radius:6px 0 7px 0; background:#1e253aa8; font:700 9px "DM Sans",sans-serif; color:#fff; padding:3px 5px; }
-    .collection-summary { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 17px; border:1px solid #e8e8ed; background:#fff; border-radius:13px; margin:27px 0 15px; }
-    .summary-left { display:flex; align-items:center; min-width:0; gap:11px; }
-    .summary-icon { display:grid; place-items:center; height:37px; width:37px; border-radius:11px; background:#edf8f2; color:#299c6b; flex:none; }
-    .summary-title { font-weight:800; font-size:12px; margin:0; }
-    .summary-detail { font-size:11px; margin:3px 0 0; color:#9297a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:360px; }
-    .summary-state { flex:none; font-size:10px; font-weight:800; color:#7c8494; padding:7px 9px; background:#f3f4f6; border-radius:7px; }
-    .summary-state.ready { background:#e8f7ef; color:#258358; }
-    .submit-btn { display:flex; align-items:center; justify-content:space-between; padding:16px 19px 16px 23px; height:58px; width:100%; border-radius:13px; border:0; color:white; background:var(--accent); box-shadow:0 12px 23px rgba(80,89,218,.23); cursor:pointer; font-size:13px; font-weight:800; letter-spacing:-.02em; transition:background .2s,transform .2s,box-shadow .2s; }
-    .submit-btn:not(:disabled):hover { background:var(--accent-dark); transform:translateY(-2px); box-shadow:0 15px 26px rgba(80,89,218,.3); }
-    .submit-btn:disabled { background:#c3c7dc; cursor:not-allowed; box-shadow:none; }
-    .submit-arrow { display:grid; place-items:center; width:28px; height:28px; border-radius:9px; background:#ffffff24; }
-    .status { display:flex; align-items:flex-start; gap:10px; margin-top:15px; padding:14px 16px; font-size:12px; line-height:1.7; border-radius:12px; font-weight:700; }
-    .status.error { color:#993843; background:#fff0f1; border:1px solid #f7d8dc; }
-    .status.success { color:#237953; background:#eaf9f0; border:1px solid #ccecd8; }
-    .status.info { color:#565f85; background:#eef1ff; border:1px solid #dae0fb; }
-    .status svg { flex:none; margin-top:2px; }
-    .footnote { text-align:center; color:#9c9eaa; font-size:10px; font-weight:600; margin:16px 0 0; line-height:1.7; }
-    .loading-overlay { position:fixed; inset:0; z-index:100; background:rgba(12,18,31,.67); backdrop-filter:blur(12px); display:grid; place-items:center; padding:22px; animation:fadeIn .18s ease; }
-    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-    .loading-card { width:min(100%, 400px); text-align:center; padding:43px 30px 31px; background:#fcfbf8; border:1px solid #ffffff60; box-shadow:0 28px 75px #0003; border-radius:25px; }
-    .loading-visual { width:115px; height:110px; position:relative; margin:0 auto 22px; perspective:600px; }
-    .loading-visual i { display:block; position:absolute; left:29px; top:11px; width:61px; height:76px; border-radius:11px; border:5px solid white; box-shadow:0 9px 23px #19274127; background:linear-gradient(145deg,#b8dcca 0%,#8299c4 48%,#e6b6a4 49%); animation:cardWave 1.85s ease-in-out infinite; }
-    .loading-visual i:nth-child(1) { background:linear-gradient(140deg,#eabeb9,#8c9dd4); animation-delay:-.34s; }
-    .loading-visual i:nth-child(2) { background:linear-gradient(140deg,#b1d0e5,#a8aaeb); animation-delay:-.18s; }
-    .loading-visual i:nth-child(3) { background:linear-gradient(140deg,#cce7d6,#df9b8a); }
-    @keyframes cardWave { 0%,100% {transform:translateX(0) rotate(-10deg) rotateY(-12deg);} 50% {transform:translateX(16px) rotate(12deg) rotateY(14deg);} }
-    .loading-card h2 { font-size:25px; letter-spacing:-.06em; margin:0 0 9px; font-weight:800; }
-    .loading-card p { font-size:12px; color:var(--muted); line-height:1.8; margin:0; }
-    .loading-line { height:4px; width:100%; overflow:hidden; margin:27px 0 17px; background:#e8eaf4; border-radius:6px; }
-    .loading-line i { display:block; width:36%; height:100%; background:var(--accent); border-radius:6px; animation:indeterminate 1.4s cubic-bezier(.75,0,.25,1) infinite; }
-    @keyframes indeterminate { from {transform:translateX(-110%);} to {transform:translateX(390%);} }
-    .cancel-upload { color:#737b8b; font-size:11px; font-weight:800; border:0; background:none; padding:9px 14px; cursor:pointer; }
-    .cancel-upload:hover { color:var(--danger); }
-    .creator-credit { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:34px; padding-top:21px; border-top:1px solid var(--line); }
-    .credit-identity { display:flex; align-items:center; gap:10px; min-width:0; }
-    .credit-emblem { width:40px; height:40px; display:grid; place-items:center; position:relative; border-radius:12px; background:#1b2637; color:#d5ffe8; font-size:13px; font-weight:800; letter-spacing:-.11em; flex:none; }
-    .credit-emblem span { position:absolute; font-size:11px; color:#b0e7c5; right:-4px; top:-8px; letter-spacing:0; }
-    .credit-identity div { min-width:0; display:flex; flex-direction:column; gap:3px; }
-    .credit-identity small { color:#999eab; font-weight:800; letter-spacing:.12em; font-size:8px; }
-    .credit-identity strong { color:#273349; font-size:12px; font-weight:800; letter-spacing:-.04em; }
-    .credit-link { display:inline-flex; align-items:center; gap:5px; padding:10px 12px; background:#f0f2f8; border:1px solid #e5e8f1; border-radius:11px; color:#303a53; font-size:10px; font-weight:800; text-decoration:none; white-space:nowrap; transition:background .2s,transform .2s; }
-    .credit-link span { color:#626c84; }
-    .credit-link:hover { background:#e6e9f6; transform:translateY(-2px); }
-    @media(max-width:1180px) {
-      .shell { width:min(100% - 30px, 1200px); margin:15px auto; grid-template-columns:minmax(0, .83fr) minmax(0,1.17fr); }
-      .showcase { padding:32px; }
-      .workspace { padding:35px 30px; }
-      .hero-title { font-size:clamp(40px, 5.3vw, 65px); }
-    }
-    @media(max-width:880px) {
-      body { background:var(--panel); }
-      .shell { display:block; min-height:100dvh; width:100%; margin:0; border-radius:0; box-shadow:none; overflow:visible; }
-      .showcase { min-height:330px; height:330px; padding:26px 28px; border-radius:0 0 28px 28px; }
-      .au-mark { width:40px; height:40px; border-radius:12px; }
-      .brand-copy strong { font-size:12px; }
-      .showcase::before { width:360px; height:360px; left:83%; top:-36%; }
-      .showcase-visual { left:39%; top:11%; width:70%; height:92%; }
-      .fallback-stack { transform:translate(-50%,-50%) rotate(-7deg) scale(.65); }
-      .showcase-foot { max-width:290px; margin: 34px 0 0; }
-      .showcase-foot .eyebrow { font-size:9px; }
-      .hero-title { font-size:clamp(36px, 5.5vw, 48px); margin:12px 0 7px; }
-      .hero-desc { font-size:11px; max-width:240px; line-height:1.6; }
-      .showcase-rule, .showcase-meta, .orbit-label { display:none; }
-      .workspace { padding:36px clamp(22px,7vw,74px) 50px; max-width:760px; margin:auto; }
-      .topbar { margin-bottom:32px; }
-      .form-flow { margin-top:29px; }
-    }
-    @media(max-width:560px) {
-      .showcase { height:285px; min-height:285px; padding:23px 22px; border-radius:0 0 24px 24px; }
-      .brand { gap:9px; }
-      .au-mark { width:36px; height:36px; border-radius:11px; }
-      .au-mark b { font-size:17px; }
-      .brand-copy strong { font-size:10.5px; }
-      .brand-copy small { font-size:7px; letter-spacing:.1em; }
-      .github-chip { min-height:35px; width:35px; border-radius:12px; padding:8px; }
-      .github-chip span { display:none; }
-      .showcase-visual { left:48%; top:13%; width:77%; height:86%; opacity:.82; }
-      .showcase-foot { max-width:267px; margin-top:37px; }
-      .hero-title { font-size:31px; line-height:1.12; margin:12px 0 0; }
-      .hero-desc { display:none; }
-      .workspace { padding:31px 20px 45px; }
-      h1 { font-size:35px; }
-      .topbar { margin-bottom:30px; }
-      .topbar-pill { font-size:9px; }
-      .fields { grid-template-columns:1fr; gap:20px; }
-      .section-heading { margin-bottom:21px; }
-      .section-divider { margin:28px 0; }
-      .dropzone { min-height:194px; }
-      .deck-gallery { gap:5px; min-height:278px; }
-      .deck-stage { width:min(100% - 68px, 320px); height:251px; }
-      .stack-card { inset:13px 12px; border-radius:16px; }
-      .deck-nav { height:30px; width:30px; }
-      .photo-counter { right:24px; bottom:24px; }
-      .summary-detail { max-width:170px; }
-    }
-    @media(max-width:370px) {
-      .hero-title { font-size:28px; }
-      .workspace { padding-left:16px; padding-right:16px; }
-      .showcase-foot { max-width:238px; }
-      .deck-stage { width:min(100% - 56px, 290px); }
-      .deck-nav { width:27px; height:27px; }
-      .creator-credit { align-items:flex-start; gap:12px; }
-      .credit-link { font-size:9px; padding:9px 10px; }
-      .credit-link span { display:none; }
-    }
-    @media(prefers-reduced-motion:reduce) {
-      *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
-    }
+    :root{--ink:#382b30;--wine:#722d3c;--wine-hover:#592231;--muted:#776b6b;--line:#e7d8cb;--cream:#fffbf5;--green:#22684b;--red:#a33737;font-family:"Noto Sans Devanagari","Nirmala UI","Mangal",system-ui,-apple-system,sans-serif;color-scheme:light}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:38px 16px;background:radial-gradient(circle at 6% 0%,#efddc9,transparent 34%),radial-gradient(circle at 95% 95%,#efdcd6,transparent 35%),#f8f5ef;color:var(--ink)}
+    main{max-width:720px;margin:auto}.eyebrow{text-align:center;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--wine);font-weight:800;margin-bottom:14px}
+    .card{background:var(--cream);border:1px solid #e9dcca;border-radius:24px;padding:clamp(22px,4vw,38px);box-shadow:0 18px 60px #5e332013}h1{text-align:center;font-size:clamp(25px,4.6vw,36px);margin:4px 0 9px;line-height:1.3}p.intro{font-size:14px;color:var(--muted);text-align:center;line-height:1.8;margin:0 0 28px}
+    .step{margin:29px 0 16px;display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px}.step span{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;border:1px solid #e2cabc;background:#f4e6dc;color:var(--wine);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{min-width:0}.field label{display:block;margin-bottom:9px;font-size:14px;font-weight:750}select,input[type=url]{width:100%;min-height:51px;padding:12px 13px;background:white;border:1px solid #d8c8ba;border-radius:12px;color:var(--ink);font:inherit;font-size:15px;outline:none}select{cursor:pointer}input[type=url]{direction:ltr}select:disabled{color:#98918a;background:#f4f0ec;cursor:not-allowed}select:focus-visible,input:focus-visible,button:focus-visible,.zone:focus-within{outline:none;border-color:var(--wine);box-shadow:0 0 0 4px #722d3c1b}.hint{font-size:12px;color:var(--muted);line-height:1.65;margin:7px 0 0}.required{color:#b03838}
+    .zone{border:2px dashed #c4a697;border-radius:17px;background:#fcf3e9;position:relative;text-align:center;padding:29px 15px}.zone.dragging{background:#f6e2d5;border-color:var(--wine)}.zone.disabled{opacity:.6;pointer-events:none}.zone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.zone strong{display:block;color:var(--wine);font-size:16px}.zone .symbol{font-size:29px;margin-bottom:7px}.zone p{color:var(--muted);font-size:12px;line-height:1.6;margin:6px 0 0}
+    .file-bar{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);margin:12px 0;flex-wrap:wrap}.files{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.file-card{padding:7px;border:1px solid var(--line);border-radius:12px;background:white;min-width:0}.file-card img{height:98px;width:100%;object-fit:cover;border-radius:8px;background:#efe5da}.file-bottom{display:flex;align-items:center;gap:6px;margin-top:5px}.file-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}.remove{min-height:27px;min-width:27px;border:0;background:#fce9e9;color:var(--red);border-radius:7px;cursor:pointer}
+    .preview{margin:24px 0 19px;border-radius:14px;padding:15px;background:#f5ede5;border:1px solid var(--line)}.preview strong{font-size:12px;color:#795f59}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:12px;margin:8px 0 0;font-family:ui-monospace,Consolas,monospace}.actions{display:flex;gap:10px;flex-wrap:wrap}button{font:inherit;font-size:14px;font-weight:750;border-radius:12px;padding:12px 16px;min-height:48px;cursor:pointer;border:1px solid var(--wine)}button:disabled{opacity:.5;cursor:not-allowed}.send{flex:1;background:var(--wine);color:white}.send:not(:disabled):hover{background:var(--wine-hover)}.secondary{background:transparent;color:var(--wine)}
+    .status{display:none;margin:15px 0 0;padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.7;white-space:pre-wrap}.status.show{display:block}.status.info{background:#ece9e5;color:#55504f}.status.success{background:#e4f3e9;color:var(--green)}.status.error{background:#fce9e8;color:#8c2c2c}.notice{margin-top:13px;font-size:12px;line-height:1.8;color:var(--muted)}footer{text-align:center;margin:19px 0;font-size:12px;color:#82766d}
+    @media(max-width:590px){.grid{grid-template-columns:1fr}.files{grid-template-columns:repeat(2,minmax(0,1fr))}.send{flex-basis:100%}}
   </style>
 </head>
 <body>
-  <main class="shell">
-    <aside class="showcase" aria-label="Aryan Upadhayay district data form">
-      <div class="showcase-head">
-        <div class="brand" aria-label="Aryan Upadhayay">
-          <span class="au-mark" aria-hidden="true"><b>AU</b></span>
-          <span class="brand-copy"><strong>ARYAN<span>/</span>UPADHAYAY</strong><small>DISTRICT DATA STUDIO</small></span>
+<main>
+  <div class="eyebrow">District • Mandal • Image Upload</div>
+  <section class="card">
+    <h1>जिला एवं मंडल छवि अपलोड</h1>
+    <p class="intro">फॉर्म में नाम हिंदी में दिखेंगे, लेकिन आपके n8n webhook को <b>English values</b> भेजी जाएँगी।</p>
+    <form id="uploadForm">
+      <div class="step"><span>01</span> जिला एवं मंडल</div>
+      <div class="grid">
+        <div class="field">
+          <label for="district">जिला <span class="required">*</span></label>
+          <select id="district" required><option value="">जिला चुनें</option></select>
         </div>
-        <a class="github-chip" href="https://github.com/upgradojha" target="_blank" rel="noopener noreferrer" aria-label="Aryan Upadhayay on GitHub, @upgradojha">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.07c-3.09.67-3.74-1.32-3.74-1.32-.51-1.3-1.24-1.65-1.24-1.65-1.01-.69.08-.68.08-.68 1.12.08 1.72 1.15 1.72 1.15.99 1.7 2.6 1.21 3.23.93.1-.71.39-1.2.71-1.48-2.47-.29-5.07-1.23-5.07-5.49 0-1.21.43-2.2 1.15-2.98-.12-.28-.5-1.41.11-2.94 0 0 .94-.3 3.06 1.14a10.68 10.68 0 0 1 5.56 0c2.12-1.44 3.06-1.14 3.06-1.14.61 1.53.23 2.66.11 2.94.72.78 1.15 1.77 1.15 2.98 0 4.27-2.61 5.2-5.09 5.48.4.35.76 1.03.76 2.08v3.09c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
-          <span>@upgradojha</span>
-        </a>
+        <div class="field">
+          <label for="mandal">मंडल <span class="required">*</span></label>
+          <select id="mandal" required disabled><option value="">पहले जिला चुनें</option></select>
+          <p class="hint" id="mandalHint">सिर्फ चुने गए जिले के मंडल दिखेंगे।</p>
+        </div>
       </div>
-      <div class="showcase-visual" id="visual" aria-hidden="true">
-        <canvas id="threeCanvas"></canvas>
-        <div class="fallback-stack"><i></i><i></i><i></i></div>
-        <span class="orbit-label">DISTRICT RECORDS / DELHI</span>
+      <div class="step"><span>02</span> तस्वीरें अपलोड करें</div>
+      <div class="field">
+        <label for="images">Images <span class="required">*</span></label>
+        <div class="zone" id="dropzone">
+          <div class="symbol" aria-hidden="true">▧</div>
+          <strong>फ़ोटो चुनें या यहाँ Drop करें</strong>
+          <p>JPG, PNG, WebP • अधिकतम 20 फ़ोटो • कुल 14 MB तक</p>
+          <input type="file" id="images" accept="image/jpeg,image/png,image/webp" multiple aria-label="तस्वीरें अपलोड करें" />
+        </div>
+        <div class="file-bar"><span id="fileCount">कोई तस्वीर नहीं चुनी गई</span><span id="fileSize">0.00 MB / 14 MB</span></div>
+        <div id="fileGrid" class="files" aria-live="polite"></div>
       </div>
-      <div class="showcase-foot">
-        <p class="eyebrow">Field data / simplified</p>
-        <div class="hero-title">Every record,<br /><em>beautifully</em><br />organized.</div>
-        <p class="hero-desc">A purpose-built form to attach photographs to the right district and mandal record.</p>
-        <hr class="showcase-rule" />
-        <div class="showcase-meta"><span><strong id="districtTotal">07</strong> DISTRICTS &nbsp;·&nbsp; <strong id="mandalTotal">115</strong> MANDALS</span><span class="dot-group" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div class="step"><span>03</span> n8n Webhook</div>
+      <div class="field">
+        <label for="webhook">Webhook URL <span class="required">*</span></label>
+        <input type="url" id="webhook" required placeholder="https://your-n8n-domain/webhook/your-path" autocomplete="off" spellcheck="false" />
+        <p class="hint">n8n Webhook node से POST Test या Production URL यहाँ पेस्ट करें।</p>
       </div>
-    </aside>
-
-    <section class="workspace" aria-label="District data entry form with photo attachments">
-      <header class="topbar"><span class="eyebrow">DELHI / DATA ENTRY</span><span class="topbar-pill"><i aria-hidden="true"></i> NEW RECORD</span></header>
-      <div class="intro-kicker"><span></span> DISTRICT + MANDAL RECORD</div>
-      <h1>Add photos to<br />your data form.</h1>
-      <p class="intro">जिला और मंडल चुनें, संबंधित तस्वीरें जोड़ें और अपना डेटा फॉर्म सबमिट करें।</p>
-
-      <form id="uploadForm" class="form-flow" novalidate>
-        <div class="section-heading"><span class="section-num">01</span><div><h2>Record details</h2><p>डेटा एंट्री के लिए जिला और मंडल चुनें</p></div></div>
-        <div class="fields">
-          <div class="field">
-            <label id="districtLabel" class="field-label" for="districtTrigger">जिला <span>DISTRICT *</span></label>
-            <div class="selector" id="districtSelector">
-              <button type="button" id="districtTrigger" class="select-trigger" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="districtOptions" aria-labelledby="districtLabel districtValue">
-                <span class="select-symbol" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5V20H3V9.5Z"/><path d="M9 20v-7h6v7M3 10h18"/></svg></span>
-                <span class="select-text"><span class="select-name" id="districtValue">जिला चुनें</span><span class="select-sub" id="districtSubtitle">Select district</span></span>
-                <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="select-popover" id="districtPopover" hidden>
-                <div class="search-wrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg><input id="districtSearch" type="text" placeholder="Search district / जिला खोजें" autocomplete="off" aria-label="Search districts" /></div>
-                <div class="option-list" id="districtOptions" role="listbox" aria-label="Districts"></div>
-              </div>
-            </div>
-          </div>
-          <div class="field">
-            <label id="mandalLabel" class="field-label" for="mandalTrigger">मंडल <span>MANDAL *</span></label>
-            <div class="selector" id="mandalSelector">
-              <button type="button" id="mandalTrigger" class="select-trigger" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="mandalOptions" aria-labelledby="mandalLabel mandalValue" disabled>
-                <span class="select-symbol" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6 7-12a7 7 0 1 0-14 0c0 6 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-                <span class="select-text"><span class="select-name" id="mandalValue">पहले जिला चुनें</span><span class="select-sub" id="mandalSubtitle">Select a district first</span></span>
-                <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="select-popover" id="mandalPopover" hidden>
-                <div class="search-wrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg><input id="mandalSearch" type="text" placeholder="Search mandal / मंडल खोजें" autocomplete="off" aria-label="Search mandals" /></div>
-                <div class="option-list" id="mandalOptions" role="listbox" aria-label="Mandals"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="helper" id="mandalHint">Only mandals for the selected district will appear.</p>
-        <hr class="section-divider" />
-        <div class="section-heading"><span class="section-num">02</span><div><h2>Attach record photos</h2><p>इस डेटा फॉर्म से संबंधित तस्वीरें जोड़ें</p></div></div>
-        <input id="images" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden aria-label="Choose images" />
-        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Choose or drop photos">
-          <div class="upload-symbol" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="15" x="3" y="6" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6M12 2v4m-3-2h6"/></svg></div>
-          <span class="drop-title">Drop photos for this record</span>
-          <span class="drop-sub">या इस फॉर्म के लिए तस्वीरें चुनें</span>
-          <button class="browse-btn" type="button" id="browseBtn">Add photos <span aria-hidden="true">↗</span></button>
-        </div>
-        <div class="upload-meta"><span id="fileCount">No images attached</span><span id="fileSize">0.00 / 14 MB</span></div>
-        <div class="usage-track" role="progressbar" aria-valuemin="0" aria-valuemax="14" aria-valuenow="0" aria-label="Total image size" id="usageTrack"><i id="usageFill"></i></div>
-        <section class="deck-module" id="deckModule" aria-label="Preview of photos attached to this data form" hidden>
-          <div class="deck-heading"><div><strong>Attached photo deck <span id="deckCount">(0)</span></strong><p>Review the images attached to your record · swipe to browse</p></div><button type="button" class="clear-link" id="clearBtn">Clear all</button></div>
-          <div class="deck-gallery">
-            <button class="deck-nav" id="prevPhoto" type="button" aria-label="Previous photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg></button>
-            <div class="deck-stage" id="deckStage" tabindex="0" role="group" aria-label="Attached photos preview deck">
-              <div class="stack-card back"><img id="deckBack" alt="" /></div>
-              <div class="stack-card mid"><img id="deckMid" alt="" /></div>
-              <div class="stack-card front"><img id="deckFront" alt="Selected photo preview" /></div>
-              <span class="photo-counter" id="photoCounter">01 / 01</span>
-            </div>
-            <button class="deck-nav" id="nextPhoto" type="button" aria-label="Next photo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>
-          </div>
-          <div class="deck-bottom"><span class="filename" id="activeFilename"></span><button type="button" class="remove-current" id="removeCurrent"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v6m4-6v6"/></svg>Remove image</button></div>
-          <div class="thumb-strip" id="thumbStrip" aria-label="All images attached to this form"></div>
-        </section>
-        <div class="collection-summary" aria-live="polite">
-          <div class="summary-left"><span class="summary-icon" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 14 3-3 4 4 3-3 4 4"/><circle cx="8.5" cy="8.5" r="1"/></svg></span><div style="min-width:0"><p class="summary-title">Record summary</p><p class="summary-detail" id="summaryDetail">Choose a district, mandal and attach photos</p></div></div>
-          <span class="summary-state" id="summaryState">INCOMPLETE</span>
-        </div>
-        <button type="submit" class="submit-btn" id="sendBtn" disabled><span id="sendText">Submit data & photos</span><span class="submit-arrow" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></button>
-        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
-        <p class="footnote">Supported: JPG, PNG, WebP · 20 images max · 14 MB total</p>
-      </form>
-      <footer class="creator-credit" aria-label="Designer and project information">
-        <div class="credit-identity"><span class="credit-emblem" aria-hidden="true">AU<span>✦</span></span><div><small>DESIGNED &amp; CRAFTED BY</small><strong>Aryan Upadhayay</strong></div></div>
-        <a class="credit-link" href="https://github.com/upgradojha" target="_blank" rel="noopener noreferrer" aria-label="Visit Aryan Upadhayay on GitHub">
-          GitHub <span>@upgradojha</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-        </a>
-      </footer>
-    </section>
-  </main>
-  <div class="loading-overlay" id="loadingOverlay" role="dialog" aria-modal="true" aria-labelledby="loadingTitle" hidden>
-    <div class="loading-card">
-      <div class="loading-visual" aria-hidden="true"><i></i><i></i><i></i></div>
-      <h2 id="loadingTitle">Finalizing your entry.</h2>
-      <p>Please keep this page open until your submission is complete.</p>
-      <div class="loading-line" role="progressbar" aria-label="Uploading" aria-valuetext="In progress"><i></i></div>
-      <button class="cancel-upload" id="cancelBtn" type="button">Cancel submission</button>
-    </div>
-  </div>
-  <script>
-    'use strict';
-    // English payload values and complete Hindi labels retained from the supplied form.
-    const districts = [{"hi":"शाहदरा","en":"Shahdara","mandals":[{"hi":"पांडव नगर","en":"Pandav Nagar"},{"hi":"दिलशाद कॉलोनी","en":"Dilshad Colony"},{"hi":"आनंद विहार","en":"Anand Vihar"},{"hi":"झिलमिल","en":"Jhilmil"},{"hi":"शकरपुर","en":"Shakarpur"},{"hi":"विश्वास नगर","en":"Vishwas Nagar"},{"hi":"प्रीत विहार","en":"Preet Vihar"},{"hi":"गांधी नगर","en":"Gandhi Nagar"},{"hi":"आजाद नगर","en":"Azad Nagar"},{"hi":"शास्त्री पार्क","en":"Shastri Park"},{"hi":"कृष्णा नगर","en":"Krishna Nagar"},{"hi":"ललिता पार्क","en":"Lalita Park"},{"hi":"लक्ष्मी नगर","en":"Laxmi Nagar"},{"hi":"आई.पी. एक्सटेंशन","en":"I.P. Extension"},{"hi":"अनारकली","en":"Anarkali"},{"hi":"जगतपुरी","en":"Jagatpuri"},{"hi":"गीता कॉलोनी","en":"Geeta Colony"},{"hi":"शाहदरा","en":"Shahdara"}]},{"hi":"नई दिल्ली","en":"New Delhi","mandals":[{"hi":"मालवीय नगर","en":"Malviya Nagar"},{"hi":"मुनिरका","en":"Munirka"},{"hi":"चिराग दिल्ली","en":"Chirag Delhi"},{"hi":"नई दिल्ली","en":"New Delhi"},{"hi":"तीन मूर्ति","en":"Teen Murti"},{"hi":"अमर कॉलोनी","en":"Amar Colony"},{"hi":"आर.के. पुरम","en":"R.K. Puram"},{"hi":"सी.आर. पार्क","en":"C.R. Park"},{"hi":"सरोजनी नगर","en":"Sarojini Nagar"},{"hi":"एंड्र्यूज़ गंज","en":"Andrews Ganj"},{"hi":"कोटला मुबारकपुर","en":"Kotla Mubarakpur"},{"hi":"ग्रीन पार्क","en":"Green Park"},{"hi":"हौज खास","en":"Hauz Khas"},{"hi":"वसंत विहार","en":"Vasant Vihar"},{"hi":"ग्रेटर कैलाश","en":"Greater Kailash"}]},{"hi":"दक्षिणी दिल्ली","en":"South Delhi","mandals":[{"hi":"168 संगम विहार सी","en":"168 Sangam Vihar C"},{"hi":"कालकाजी","en":"Kalkaji"},{"hi":"संगम विहार-B","en":"Sangam Vihar B"},{"hi":"संगम विहार-A","en":"Sangam Vihar A"},{"hi":"पुल प्रह्लादपुर","en":"Pul Prahladpur"},{"hi":"तुगलकाबाद","en":"Tughlakabad"},{"hi":"बदरपुर","en":"Badarpur"},{"hi":"मोलड़बंद","en":"Molarband"},{"hi":"गोविंदपुरी","en":"Govindpuri"},{"hi":"जैतपुर","en":"Jaitpur"},{"hi":"देवली","en":"Deoli"},{"hi":"तिगड़ी","en":"Tigri"},{"hi":"दक्षिणपुरी","en":"Dakshinpuri"},{"hi":"तुगलकाबाद विस्तार","en":"Tughlakabad Extension"},{"hi":"श्रीनिवासपुरी","en":"Srinivaspuri"},{"hi":"हरकेश नगर","en":"Harkesh Nagar"},{"hi":"मीठापुर","en":"Meethapur"},{"hi":"हरिनगर","en":"Hari Nagar"}]},{"hi":"पश्चिमी दिल्ली","en":"West Delhi","mandals":[{"hi":"विष्णु गार्डन","en":"Vishnu Garden"},{"hi":"पंजाबी बाग","en":"Punjabi Bagh"},{"hi":"मादीपुर","en":"Madipur"},{"hi":"रघुबीर नगर","en":"Raghubir Nagar"},{"hi":"राजौरी गार्डन","en":"Rajouri Garden"},{"hi":"चौखंडी नगर","en":"Chaukhandi Nagar"},{"hi":"सुभाष नगर","en":"Subhash Nagar"},{"hi":"हरि नगर","en":"Hari Nagar"},{"hi":"फतेह नगर","en":"Fateh Nagar"},{"hi":"तिलक नगर","en":"Tilak Nagar"},{"hi":"ख्याला","en":"Khyala"},{"hi":"केशोपुर","en":"Keshopur"},{"hi":"जनकपुरी साउथ","en":"Janakpuri South"},{"hi":"महावीर एन्क्लेव","en":"Mahavir Enclave"},{"hi":"जनकपुरी वेस्ट","en":"Janakpuri West"}]},{"hi":"नजफगढ़","en":"Najafgarh","mandals":[{"hi":"मंगलापुरी","en":"Mangalapuri"},{"hi":"नंगली सकरावती","en":"Nangli Sakrawati"},{"hi":"ककरोला","en":"Kakrola"},{"hi":"बापरौला","en":"Baprola"},{"hi":"बिन्दापुर","en":"Bindapur"},{"hi":"मोहन गार्डन","en":"Mohan Garden"},{"hi":"नजफगढ़","en":"Najafgarh"},{"hi":"हस्तसाल","en":"Hastsal"},{"hi":"रौशनपुरा","en":"Roshanpura"},{"hi":"कुंवर सिंह नगर","en":"Kunwar Singh Nagar"},{"hi":"विकासपुरी","en":"Vikaspuri"},{"hi":"नवादा","en":"Nawada"},{"hi":"द्वारका ए","en":"Dwarka A"},{"hi":"सैनिक एन्क्लेव","en":"Sainik Enclave"},{"hi":"सागरपुर","en":"Sagarpur"},{"hi":"विकास नगर","en":"Vikas Nagar"},{"hi":"उत्तम नगर","en":"Uttam Nagar"},{"hi":"द्वारका बी","en":"Dwarka B"},{"hi":"मटियाला","en":"Matiala"},{"hi":"छावला","en":"Chhawla"},{"hi":"ईशापुर","en":"Isapur"},{"hi":"दिचाऊँ कलां","en":"Dichaon Kalan"}]},{"hi":"चाँदनी चौक","en":"Chandni Chowk","mandals":[{"hi":"कमला नगर","en":"Kamla Nagar"},{"hi":"चांदनी चौक","en":"Chandni Chowk"},{"hi":"सिविल लाइन","en":"Civil Lines"},{"hi":"संगम पार्क","en":"Sangam Park"},{"hi":"राम नगर","en":"Ram Nagar"},{"hi":"शास्त्री नगर","en":"Shastri Nagar"},{"hi":"सदर बाजार","en":"Sadar Bazar"},{"hi":"दिल्ली गेट","en":"Delhi Gate"},{"hi":"मॉडल टाउन","en":"Model Town"},{"hi":"किशनगंज","en":"Kishanganj"},{"hi":"बाजार सीता राम","en":"Bazar Sita Ram"},{"hi":"कुरैश नगर","en":"Quresh Nagar"}]},{"hi":"केशवपुरम","en":"Keshavpuram","mandals":[{"hi":"धीरपुर","en":"Dheerpur"},{"hi":"आजादपुर","en":"Azadpur"},{"hi":"शालीमार बाग ए","en":"Shalimar Bagh A"},{"hi":"रानी बाग","en":"Rani Bagh"},{"hi":"वजीरपुर","en":"Wazirpur"},{"hi":"शालीमार बाग बी","en":"Shalimar Bagh B"},{"hi":"अशोक विहार","en":"Ashok Vihar"},{"hi":"आदर्श नगर","en":"Adarsh Nagar"},{"hi":"केशवपुरम","en":"Keshavpuram"},{"hi":"पश्चिम विहार","en":"Paschim Vihar"},{"hi":"पीतमपुरा","en":"Pitampura"},{"hi":"सरस्वती विहार","en":"Saraswati Vihar"},{"hi":"कोहाट एन्क्लेव","en":"Kohat Enclave"},{"hi":"शकूरपुर","en":"Shakurpur"},{"hi":"त्रिनगर","en":"Tri Nagar"}]}];
-    const WEBHOOK_URL = 'https://shone-eccentric-undefined.ngrok-free.dev/webhook/delhi-form';
-    const MAX_FILES = 20;
-    const MAX_BYTES = 14 * 1024 * 1024;
-    const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-    const $ = id => document.getElementById(id);
-    let district = null;
-    let mandal = null;
-    let photos = [];
-    let activeIndex = 0;
-    let submitting = false;
-    let controller = null;
-    let openMenu = null;
-    let lastFocus = null;
-    let pointerX = null;
-    const searchInputs = { district: $('districtSearch'), mandal: $('mandalSearch') };
-    const buttons = { district: $('districtTrigger'), mandal: $('mandalTrigger') };
-    const panels = { district: $('districtPopover'), mandal: $('mandalPopover') };
-    const lists = { district: $('districtOptions'), mandal: $('mandalOptions') };
-    $('districtTotal').textContent = String(districts.length).padStart(2,'0');
-    $('mandalTotal').textContent = String(districts.reduce((n, d) => n + d.mandals.length, 0));
-    function mb(bytes) { return (bytes / 1048576).toFixed(2); }
-    function totalBytes() { return photos.reduce((n, x) => n + x.file.size, 0); }
-    function clearStatus() { $('status').hidden = true; $('status').textContent = ''; }
-    function status(message, kind='info') {
-      const el = $('status');
-      el.hidden = false;
-      el.className = 'status ' + kind;
-      const icon = document.createElement('span');
-      icon.textContent = kind === 'success' ? '✓' : kind === 'error' ? '!' : '•';
-      icon.setAttribute('aria-hidden','true');
-      icon.style.cssText = 'font-size:15px;font-weight:800;line-height:1.3';
-      el.replaceChildren(icon, document.createTextNode(message));
-    }
-    function values(type) { return type === 'district' ? districts : district ? district.mandals : []; }
-    function selectedValue(type) { return type === 'district' ? district : mandal; }
-    function renderOptions(type) {
-      const q = searchInputs[type].value.trim().toLocaleLowerCase();
-      const filtered = values(type).filter(item => (item.hi + ' ' + item.en).toLocaleLowerCase().includes(q));
-      const root = lists[type];
-      root.replaceChildren();
-      if (!filtered.length) {
-        const empty = document.createElement('p'); empty.className = 'empty-list'; empty.textContent = 'No matches found'; root.append(empty); return;
+      <div class="preview" aria-live="polite">
+        <strong>DATA PREVIEW — Values sent to n8n (English)</strong>
+        <pre id="preview"></pre>
+      </div>
+      <div class="actions">
+        <button class="send" id="sendBtn" type="submit" disabled>Send Images to n8n</button>
+        <button class="secondary" id="cancelBtn" type="button" hidden>Cancel Upload</button>
+        <button class="secondary" id="clearBtn" type="button">Clear Images</button>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <p class="notice">Form sends <code>multipart/form-data</code> with English keys: <code>district</code>, <code>mandal</code>, <code>image_count</code>, <code>submitted_at</code>, <code>image_1</code>, etc. Images are uploaded to ImageKit by your n8n workflow, not by this form directly.</p>
+    </form>
+  </section>
+  <footer id="totals"></footer>
+</main>
+<script>
+'use strict';
+const districts = [
+  {
+    "hi": "शाहदरा",
+    "en": "Shahdara",
+    "mandals": [
+      {
+        "hi": "पांडव नगर",
+        "en": "Pandav Nagar"
+      },
+      {
+        "hi": "दिलशाद कॉलोनी",
+        "en": "Dilshad Colony"
+      },
+      {
+        "hi": "आनंद विहार",
+        "en": "Anand Vihar"
+      },
+      {
+        "hi": "झिलमिल",
+        "en": "Jhilmil"
+      },
+      {
+        "hi": "शकरपुर",
+        "en": "Shakarpur"
+      },
+      {
+        "hi": "विश्वास नगर",
+        "en": "Vishwas Nagar"
+      },
+      {
+        "hi": "प्रीत विहार",
+        "en": "Preet Vihar"
+      },
+      {
+        "hi": "गांधी नगर",
+        "en": "Gandhi Nagar"
+      },
+      {
+        "hi": "आजाद नगर",
+        "en": "Azad Nagar"
+      },
+      {
+        "hi": "शास्त्री पार्क",
+        "en": "Shastri Park"
+      },
+      {
+        "hi": "कृष्णा नगर",
+        "en": "Krishna Nagar"
+      },
+      {
+        "hi": "ललिता पार्क",
+        "en": "Lalita Park"
+      },
+      {
+        "hi": "लक्ष्मी नगर",
+        "en": "Laxmi Nagar"
+      },
+      {
+        "hi": "आई.पी. एक्सटेंशन",
+        "en": "I.P. Extension"
+      },
+      {
+        "hi": "अनारकली",
+        "en": "Anarkali"
+      },
+      {
+        "hi": "जगतपुरी",
+        "en": "Jagatpuri"
+      },
+      {
+        "hi": "गीता कॉलोनी",
+        "en": "Geeta Colony"
+      },
+      {
+        "hi": "शाहदरा",
+        "en": "Shahdara"
       }
-      for (const item of filtered) {
-        const opt = document.createElement('button');
-        opt.type='button'; opt.className='option'; opt.setAttribute('role','option');
-        opt.setAttribute('aria-selected', String(selectedValue(type)?.en === item.en));
-        const wrap = document.createElement('span'); wrap.className='option-name';
-        const name = document.createElement('strong'); name.textContent=item.hi;
-        const english = document.createElement('small'); english.textContent=item.en;
-        wrap.append(name, english); opt.append(wrap);
-        if (selectedValue(type)?.en === item.en) {
-          const mark=document.createElement('span'); mark.className='option-mark'; mark.textContent='✓'; opt.append(mark);
-        }
-        opt.addEventListener('click', () => choose(type,item));
-        root.append(opt);
+    ]
+  },
+  {
+    "hi": "नई दिल्ली",
+    "en": "New Delhi",
+    "mandals": [
+      {
+        "hi": "मालवीय नगर",
+        "en": "Malviya Nagar"
+      },
+      {
+        "hi": "मुनिरका",
+        "en": "Munirka"
+      },
+      {
+        "hi": "चिराग दिल्ली",
+        "en": "Chirag Delhi"
+      },
+      {
+        "hi": "नई दिल्ली",
+        "en": "New Delhi"
+      },
+      {
+        "hi": "तीन मूर्ति",
+        "en": "Teen Murti"
+      },
+      {
+        "hi": "अमर कॉलोनी",
+        "en": "Amar Colony"
+      },
+      {
+        "hi": "आर.के. पुरम",
+        "en": "R.K. Puram"
+      },
+      {
+        "hi": "सी.आर. पार्क",
+        "en": "C.R. Park"
+      },
+      {
+        "hi": "सरोजनी नगर",
+        "en": "Sarojini Nagar"
+      },
+      {
+        "hi": "एंड्र्यूज़ गंज",
+        "en": "Andrews Ganj"
+      },
+      {
+        "hi": "कोटला मुबारकपुर",
+        "en": "Kotla Mubarakpur"
+      },
+      {
+        "hi": "ग्रीन पार्क",
+        "en": "Green Park"
+      },
+      {
+        "hi": "हौज खास",
+        "en": "Hauz Khas"
+      },
+      {
+        "hi": "वसंत विहार",
+        "en": "Vasant Vihar"
+      },
+      {
+        "hi": "ग्रेटर कैलाश",
+        "en": "Greater Kailash"
       }
-    }
-    function setField(type, val, placeholder, subtitle) {
-      $(type+'Value').textContent=val?.hi || placeholder;
-      $(type+'Subtitle').textContent=val?.en || subtitle;
-    }
-    function choose(type,item) {
-      if (submitting) return;
-      if (type === 'district') {
-        const changed=district?.en !== item.en;
-        district=item;
-        if (changed) mandal=null;
-        setField('district',district,'जिला चुनें','Select district');
-        setField('mandal',mandal,'मंडल चुनें','Select mandal');
-        buttons.mandal.disabled=false;
-        $('mandalHint').textContent=`${district.mandals.length} mandals available in ${district.en}.`;
-      } else {
-        mandal=item;
-        setField('mandal',mandal,'मंडल चुनें','Select mandal');
+    ]
+  },
+  {
+    "hi": "दक्षिणी दिल्ली",
+    "en": "South Delhi",
+    "mandals": [
+      {
+        "hi": "168 संगम विहार सी",
+        "en": "168 Sangam Vihar C"
+      },
+      {
+        "hi": "कालकाजी",
+        "en": "Kalkaji"
+      },
+      {
+        "hi": "संगम विहार-B",
+        "en": "Sangam Vihar B"
+      },
+      {
+        "hi": "संगम विहार-A",
+        "en": "Sangam Vihar A"
+      },
+      {
+        "hi": "पुल प्रह्लादपुर",
+        "en": "Pul Prahladpur"
+      },
+      {
+        "hi": "तुगलकाबाद",
+        "en": "Tughlakabad"
+      },
+      {
+        "hi": "बदरपुर",
+        "en": "Badarpur"
+      },
+      {
+        "hi": "मोलड़बंद",
+        "en": "Molarband"
+      },
+      {
+        "hi": "गोविंदपुरी",
+        "en": "Govindpuri"
+      },
+      {
+        "hi": "जैतपुर",
+        "en": "Jaitpur"
+      },
+      {
+        "hi": "देवली",
+        "en": "Deoli"
+      },
+      {
+        "hi": "तिगड़ी",
+        "en": "Tigri"
+      },
+      {
+        "hi": "दक्षिणपुरी",
+        "en": "Dakshinpuri"
+      },
+      {
+        "hi": "तुगलकाबाद विस्तार",
+        "en": "Tughlakabad Extension"
+      },
+      {
+        "hi": "श्रीनिवासपुरी",
+        "en": "Srinivaspuri"
+      },
+      {
+        "hi": "हरकेश नगर",
+        "en": "Harkesh Nagar"
+      },
+      {
+        "hi": "मीठापुर",
+        "en": "Meethapur"
+      },
+      {
+        "hi": "हरिनगर",
+        "en": "Hari Nagar"
       }
-      closeDropdown(true); clearStatus(); refresh();
-    }
-    function closeDropdown(restoreFocus=false) {
-      if (!openMenu) return;
-      const type=openMenu;
-      panels[type].hidden=true; buttons[type].setAttribute('aria-expanded','false');
-      openMenu=null;
-      if (restoreFocus) buttons[type].focus({preventScroll:true});
-    }
-    function openDropdown(type) {
-      if (submitting || buttons[type].disabled) return;
-      if (openMenu === type) { closeDropdown(true); return; }
-      closeDropdown(); openMenu=type;
-      panels[type].hidden=false; buttons[type].setAttribute('aria-expanded','true');
-      searchInputs[type].value=''; renderOptions(type);
-      searchInputs[type].focus({preventScroll:true});
-    }
-    for (const type of ['district','mandal']) {
-      buttons[type].addEventListener('click', () => openDropdown(type));
-      searchInputs[type].addEventListener('input', () => renderOptions(type));
-      searchInputs[type].addEventListener('keydown', event => {
-        if (event.key==='Escape') { event.preventDefault(); closeDropdown(true); }
-        const opts=[...lists[type].querySelectorAll('.option')];
-        if ((event.key==='ArrowDown' || event.key==='ArrowUp') && opts.length) {
-          event.preventDefault(); (event.key==='ArrowDown' ? opts[0] : opts[opts.length-1]).focus();
-        }
-        if (event.key==='Enter' && opts.length) { event.preventDefault(); opts[0].click(); }
-      });
-      lists[type].addEventListener('keydown', e => {
-        const options=[...lists[type].querySelectorAll('.option')];
-        const i=options.indexOf(document.activeElement);
-        if (e.key==='Escape') { e.preventDefault(); closeDropdown(true); }
-        else if (e.key==='ArrowDown' || e.key==='ArrowUp') {
-          e.preventDefault();
-          const target=options[(i+(e.key==='ArrowDown'?1:-1)+options.length)%options.length];
-          target?.focus();
-        } else if (e.key.length===1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          searchInputs[type].focus(); searchInputs[type].value+=e.key; renderOptions(type);
-        }
-      });
-    }
-    document.addEventListener('pointerdown', e => {
-      if (openMenu && !$(openMenu+'Selector').contains(e.target)) closeDropdown();
+    ]
+  },
+  {
+    "hi": "पश्चिमी दिल्ली",
+    "en": "West Delhi",
+    "mandals": [
+      {
+        "hi": "विष्णु गार्डन",
+        "en": "Vishnu Garden"
+      },
+      {
+        "hi": "पंजाबी बाग",
+        "en": "Punjabi Bagh"
+      },
+      {
+        "hi": "मादीपुर",
+        "en": "Madipur"
+      },
+      {
+        "hi": "रघुबीर नगर",
+        "en": "Raghubir Nagar"
+      },
+      {
+        "hi": "राजौरी गार्डन",
+        "en": "Rajouri Garden"
+      },
+      {
+        "hi": "चौखंडी नगर",
+        "en": "Chaukhandi Nagar"
+      },
+      {
+        "hi": "सुभाष नगर",
+        "en": "Subhash Nagar"
+      },
+      {
+        "hi": "हरि नगर",
+        "en": "Hari Nagar"
+      },
+      {
+        "hi": "फतेह नगर",
+        "en": "Fateh Nagar"
+      },
+      {
+        "hi": "तिलक नगर",
+        "en": "Tilak Nagar"
+      },
+      {
+        "hi": "ख्याला",
+        "en": "Khyala"
+      },
+      {
+        "hi": "केशोपुर",
+        "en": "Keshopur"
+      },
+      {
+        "hi": "जनकपुरी साउथ",
+        "en": "Janakpuri South"
+      },
+      {
+        "hi": "महावीर एन्क्लेव",
+        "en": "Mahavir Enclave"
+      },
+      {
+        "hi": "जनकपुरी वेस्ट",
+        "en": "Janakpuri West"
+      }
+    ]
+  },
+  {
+    "hi": "नजफगढ़",
+    "en": "Najafgarh",
+    "mandals": [
+      {
+        "hi": "मंगलापुरी",
+        "en": "Mangalapuri"
+      },
+      {
+        "hi": "नंगली सकरावती",
+        "en": "Nangli Sakrawati"
+      },
+      {
+        "hi": "ककरोला",
+        "en": "Kakrola"
+      },
+      {
+        "hi": "बापरौला",
+        "en": "Baprola"
+      },
+      {
+        "hi": "बिन्दापुर",
+        "en": "Bindapur"
+      },
+      {
+        "hi": "मोहन गार्डन",
+        "en": "Mohan Garden"
+      },
+      {
+        "hi": "नजफगढ़",
+        "en": "Najafgarh"
+      },
+      {
+        "hi": "हस्तसाल",
+        "en": "Hastsal"
+      },
+      {
+        "hi": "रौशनपुरा",
+        "en": "Roshanpura"
+      },
+      {
+        "hi": "कुंवर सिंह नगर",
+        "en": "Kunwar Singh Nagar"
+      },
+      {
+        "hi": "विकासपुरी",
+        "en": "Vikaspuri"
+      },
+      {
+        "hi": "नवादा",
+        "en": "Nawada"
+      },
+      {
+        "hi": "द्वारका ए",
+        "en": "Dwarka A"
+      },
+      {
+        "hi": "सैनिक एन्क्लेव",
+        "en": "Sainik Enclave"
+      },
+      {
+        "hi": "सागरपुर",
+        "en": "Sagarpur"
+      },
+      {
+        "hi": "विकास नगर",
+        "en": "Vikas Nagar"
+      },
+      {
+        "hi": "उत्तम नगर",
+        "en": "Uttam Nagar"
+      },
+      {
+        "hi": "द्वारका बी",
+        "en": "Dwarka B"
+      },
+      {
+        "hi": "मटियाला",
+        "en": "Matiala"
+      },
+      {
+        "hi": "छावला",
+        "en": "Chhawla"
+      },
+      {
+        "hi": "ईशापुर",
+        "en": "Isapur"
+      },
+      {
+        "hi": "दिचाऊँ कलां",
+        "en": "Dichaon Kalan"
+      }
+    ]
+  },
+  {
+    "hi": "चाँदनी चौक",
+    "en": "Chandni Chowk",
+    "mandals": [
+      {
+        "hi": "कमला नगर",
+        "en": "Kamla Nagar"
+      },
+      {
+        "hi": "चांदनी चौक",
+        "en": "Chandni Chowk"
+      },
+      {
+        "hi": "सिविल लाइन",
+        "en": "Civil Lines"
+      },
+      {
+        "hi": "संगम पार्क",
+        "en": "Sangam Park"
+      },
+      {
+        "hi": "राम नगर",
+        "en": "Ram Nagar"
+      },
+      {
+        "hi": "शास्त्री नगर",
+        "en": "Shastri Nagar"
+      },
+      {
+        "hi": "सदर बाजार",
+        "en": "Sadar Bazar"
+      },
+      {
+        "hi": "दिल्ली गेट",
+        "en": "Delhi Gate"
+      },
+      {
+        "hi": "मॉडल टाउन",
+        "en": "Model Town"
+      },
+      {
+        "hi": "किशनगंज",
+        "en": "Kishanganj"
+      },
+      {
+        "hi": "बाजार सीता राम",
+        "en": "Bazar Sita Ram"
+      },
+      {
+        "hi": "कुरैश नगर",
+        "en": "Quresh Nagar"
+      }
+    ]
+  },
+  {
+    "hi": "केशवपुरम",
+    "en": "Keshavpuram",
+    "mandals": [
+      {
+        "hi": "धीरपुर",
+        "en": "Dheerpur"
+      },
+      {
+        "hi": "आजादपुर",
+        "en": "Azadpur"
+      },
+      {
+        "hi": "शालीमार बाग ए",
+        "en": "Shalimar Bagh A"
+      },
+      {
+        "hi": "रानी बाग",
+        "en": "Rani Bagh"
+      },
+      {
+        "hi": "वजीरपुर",
+        "en": "Wazirpur"
+      },
+      {
+        "hi": "शालीमार बाग बी",
+        "en": "Shalimar Bagh B"
+      },
+      {
+        "hi": "अशोक विहार",
+        "en": "Ashok Vihar"
+      },
+      {
+        "hi": "आदर्श नगर",
+        "en": "Adarsh Nagar"
+      },
+      {
+        "hi": "केशवपुरम",
+        "en": "Keshavpuram"
+      },
+      {
+        "hi": "पश्चिम विहार",
+        "en": "Paschim Vihar"
+      },
+      {
+        "hi": "पीतमपुरा",
+        "en": "Pitampura"
+      },
+      {
+        "hi": "सरस्वती विहार",
+        "en": "Saraswati Vihar"
+      },
+      {
+        "hi": "कोहाट एन्क्लेव",
+        "en": "Kohat Enclave"
+      },
+      {
+        "hi": "शकूरपुर",
+        "en": "Shakurpur"
+      },
+      {
+        "hi": "त्रिनगर",
+        "en": "Tri Nagar"
+      }
+    ]
+  }
+];
+const MAX_FILES = 20;
+const MAX_BYTES = 14 * 1024 * 1024;
+const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const $ = id => document.getElementById(id);
+const districtSelect = $('district');
+const mandalSelect = $('mandal');
+const fileInput = $('images');
+let images = [];
+let sending = false;
+let controller = null;
+const option = (target, value, label) => {
+  const item = document.createElement('option');
+  item.value = value;
+  item.textContent = label;
+  target.appendChild(item);
+};
+districts.forEach(d => option(districtSelect, d.en, `${d.hi} (${d.en})`));
+$('totals').textContent = `${districts.length} Districts • ${districts.reduce((n, d) => n + d.mandals.length, 0)} Mandals`;
+const selectedDistrict = () => districts.find(d => d.en === districtSelect.value);
+const selectedMandal = () => selectedDistrict()?.mandals.find(m => m.en === mandalSelect.value);
+const totalBytes = () => images.reduce((n, entry) => n + entry.file.size, 0);
+const formatMB = bytes => (bytes / 1048576).toFixed(2) + ' MB';
+const ready = () => Boolean(selectedDistrict() && selectedMandal() && images.length && $('webhook').value.trim() && !sending);
+function status(text, level = 'info') {
+  const box = $('status');
+  box.textContent = text;
+  box.className = 'status show ' + level;
+}
+function clearStatus() { $('status').className = 'status'; $('status').textContent = ''; }
+function refresh() {
+  $('fileCount').textContent = images.length ? images.length + ' images selected' : 'कोई तस्वीर नहीं चुनी गई';
+  $('fileSize').textContent = `${formatMB(totalBytes())} / 14 MB`;
+  $('sendBtn').disabled = !ready();
+  $('clearBtn').disabled = !images.length || sending;
+  const payloadPreview = {
+    district: districtSelect.value,
+    mandal: mandalSelect.value,
+    image_count: images.length,
+    image_fields: images.map((item, i) => ({ field: `image_${i+1}`, filename: item.file.name }))
+  };
+  $('preview').textContent = JSON.stringify(payloadPreview, null, 2);
+}
+districtSelect.addEventListener('change', () => {
+  mandalSelect.replaceChildren();
+  const list = selectedDistrict()?.mandals || [];
+  option(mandalSelect, '', list.length ? 'मंडल चुनें' : 'पहले जिला चुनें');
+  list.forEach(m => option(mandalSelect, m.en, `${m.hi} (${m.en})`));
+  mandalSelect.disabled = list.length === 0;
+  $('mandalHint').textContent = list.length ? `${list.length} मंडल उपलब्ध हैं।` : 'सिर्फ चुने गए जिले के मंडल दिखेंगे।';
+  clearStatus(); refresh();
+});
+mandalSelect.addEventListener('change', () => { clearStatus(); refresh(); });
+$('webhook').addEventListener('input', refresh);
+function drawImages() {
+  const grid = $('fileGrid');
+  grid.replaceChildren();
+  images.forEach(entry => {
+    const card = document.createElement('div'); card.className = 'file-card';
+    const picture = document.createElement('img'); picture.src = entry.url; picture.alt = entry.file.name;
+    const bottom = document.createElement('div'); bottom.className = 'file-bottom';
+    const name = document.createElement('span'); name.className = 'file-name'; name.title = entry.file.name; name.textContent = entry.file.name;
+    const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'remove'; remove.textContent = '×';
+    remove.disabled = sending; remove.setAttribute('aria-label', 'Remove ' + entry.file.name);
+    remove.addEventListener('click', () => {
+      if (sending) return;
+      URL.revokeObjectURL(entry.url); images = images.filter(item => item !== entry);
+      drawImages(); refresh(); clearStatus();
     });
-    document.addEventListener('keydown', e => {
-      if (e.key==='Escape' && openMenu) closeDropdown(true);
-    });
-    function ready() { return Boolean(district && mandal && photos.length && !submitting); }
-    function refresh() {
-      const size=totalBytes();
-      $('fileCount').textContent=photos.length ? `${photos.length} / 20 images attached` : 'No images attached';
-      $('fileSize').textContent=`${mb(size)} / 14 MB`;
-      const usage=100*size/MAX_BYTES;
-      $('usageFill').style.width=Math.min(100,usage)+'%';
-      $('usageTrack').setAttribute('aria-valuenow',(size/1048576).toFixed(2));
-      $('sendBtn').disabled=!ready();
-      const location=mandal ? `${district.en} · ${mandal.en}` : district ? `${district.en} · Select mandal` : 'Select your district and mandal';
-      $('summaryDetail').textContent=photos.length ? `${location} · ${photos.length} image${photos.length===1?'':'s'} attached` : location + ' · Add images';
-      $('summaryState').textContent=ready() ? 'READY' : 'INCOMPLETE';
-      $('summaryState').classList.toggle('ready',ready());
-    }
-    function clearImages() {
-      for (const photo of photos) URL.revokeObjectURL(photo.url);
-      photos=[]; activeIndex=0; $('images').value='';
-      renderDeck(); refresh();
-    }
-    function removePhoto(index) {
-      if (submitting || !photos[index]) return;
-      URL.revokeObjectURL(photos[index].url);
-      photos.splice(index,1);
-      activeIndex=Math.min(activeIndex,photos.length-1);
-      if (activeIndex<0) activeIndex=0;
-      renderDeck(); refresh(); clearStatus();
-    }
-    function addImages(files) {
-      if (submitting) return;
-      const warnings=[];
-      const added=[];
-      for (const file of files) {
-        if (!ALLOWED_TYPES.has(file.type)) { warnings.push('Only JPG, PNG and WebP images are supported.'); continue; }
-        if (photos.some(p => p.file.name===file.name && p.file.size===file.size && p.file.lastModified===file.lastModified)) continue;
-        if (photos.length>=MAX_FILES) { warnings.push('You can add up to 20 photos.'); break; }
-        if (totalBytes()+file.size>MAX_BYTES) { warnings.push('Total attached images must stay under 14 MB.'); continue; }
-        const entry={file,url:URL.createObjectURL(file)};
-        photos.push(entry); added.push(entry);
-      }
-      if (added.length && photos.length===added.length) activeIndex=0;
-      renderDeck(); refresh();
-      if (warnings.length) status([...new Set(warnings)].join(' '),'error'); else clearStatus();
-    }
-    function setDeckImage(id,index) {
-      $(id).src=photos[(index+photos.length)%photos.length].url;
-    }
-    function renderDeck() {
-      const has=photos.length>0;
-      $('deckModule').hidden=!has;
-      $('deckCount').textContent=`(${photos.length})`;
-      if (!has) { $('deckFront').removeAttribute('src'); $('thumbStrip').replaceChildren(); return; }
-      activeIndex=(activeIndex+photos.length)%photos.length;
-      setDeckImage('deckFront', activeIndex);
-      setDeckImage('deckMid', activeIndex+1);
-      setDeckImage('deckBack', activeIndex+2);
-      $('deckFront').alt=photos[activeIndex].file.name;
-      $('photoCounter').textContent=`${String(activeIndex+1).padStart(2,'0')} / ${String(photos.length).padStart(2,'0')}`;
-      $('activeFilename').textContent=photos[activeIndex].file.name;
-      $('activeFilename').title=photos[activeIndex].file.name;
-      $('prevPhoto').disabled=photos.length<2 || submitting;
-      $('nextPhoto').disabled=photos.length<2 || submitting;
-      $('removeCurrent').disabled=submitting;
-      $('clearBtn').disabled=submitting;
-      const thumbs=$('thumbStrip'); thumbs.replaceChildren();
-      photos.forEach((photo,index)=>{
-        const btn=document.createElement('button'); btn.type='button'; btn.className='thumb'+(index===activeIndex?' active':'');
-        btn.setAttribute('aria-label',`View photo ${index+1}: ${photo.file.name}`);
-        btn.setAttribute('aria-pressed',String(index===activeIndex)); btn.disabled=submitting;
-        const img=document.createElement('img'); img.src=photo.url; img.alt=''; img.loading='lazy';
-        const tag=document.createElement('span'); tag.textContent=String(index+1).padStart(2,'0');
-        btn.append(img,tag); btn.addEventListener('click',()=>{ activeIndex=index; renderDeck(); });
-        thumbs.append(btn);
-      });
-      thumbs.querySelector('.active')?.scrollIntoView({block:'nearest', inline:'nearest', behavior:'auto'});
-    }
-    function moveDeck(step) { if (!submitting && photos.length>1) { activeIndex=(activeIndex+step+photos.length)%photos.length; renderDeck(); } }
-    $('prevPhoto').addEventListener('click',()=>moveDeck(-1));
-    $('nextPhoto').addEventListener('click',()=>moveDeck(1));
-    $('removeCurrent').addEventListener('click',()=>removePhoto(activeIndex));
-    $('clearBtn').addEventListener('click',()=>{ if(!submitting){clearImages();clearStatus();} });
-    $('deckStage').addEventListener('keydown',e=>{
-      if (e.key==='ArrowLeft' || e.key==='ArrowRight') { e.preventDefault(); moveDeck(e.key==='ArrowLeft'?-1:1); }
-    });
-    $('deckStage').addEventListener('pointerdown',e=>{ if(e.isPrimary) pointerX=e.clientX; });
-    $('deckStage').addEventListener('pointerup',e=>{
-      if (pointerX!==null && Math.abs(e.clientX-pointerX)>40) moveDeck(e.clientX<pointerX?1:-1);
-      pointerX=null;
-    });
-    $('deckStage').addEventListener('pointercancel',()=>pointerX=null);
-    const fileInput=$('images');
-    function browse() { if(!submitting) fileInput.click(); }
-    $('browseBtn').addEventListener('click',e=>{e.stopPropagation();browse();});
-    $('dropzone').addEventListener('click',browse);
-    $('dropzone').addEventListener('keydown',e=>{ if(e.target===$('dropzone') && (e.key==='Enter'||e.key===' ')){ e.preventDefault();browse(); } });
-    fileInput.addEventListener('change',e=>{ addImages([...e.target.files]); e.target.value=''; });
-    const zone=$('dropzone');
-    for (const type of ['dragenter','dragover']) zone.addEventListener(type,e=>{e.preventDefault(); if(!submitting) zone.classList.add('dragging');});
-    for (const type of ['dragleave','drop']) zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove('dragging');});
-    zone.addEventListener('drop',e=>{if(!submitting) addImages([...e.dataTransfer.files]);});
-    function setSubmitting(value) {
-      submitting=value;
-      $('loadingOverlay').hidden=!value;
-      buttons.district.disabled=value;
-      buttons.mandal.disabled=value || !district;
-      fileInput.disabled=value;
-      zone.classList.toggle('disabled',value);
-      $('browseBtn').disabled=value;
-      $('dropzone').setAttribute('aria-disabled',String(value));
-      $('deckStage').tabIndex=value?-1:0;
-      closeDropdown(); renderDeck(); refresh();
-      if(value) { lastFocus=document.activeElement; $('cancelBtn').focus({preventScroll:true}); }
-      else { (lastFocus || $('sendBtn')).focus({preventScroll:true}); }
-    }
-    $('cancelBtn').addEventListener('click',()=>controller?.abort());
-    $('uploadForm').addEventListener('submit',async e=>{
-      e.preventDefault();
-      if(submitting) return;
-      if(!district || !mandal) { status('Please select your district and mandal.','error'); return; }
-      if(!photos.length) { status('Please attach at least one photo to this record.','error'); return; }
-      if(photos.length>MAX_FILES || totalBytes()>MAX_BYTES) { status('Please check your photo limits.','error'); return; }
-      const payload=new FormData();
-      payload.append('district', district.en);
-      payload.append('mandal', mandal.en);
-      payload.append('image_count',String(photos.length));
-      payload.append('submitted_at',new Date().toISOString());
-      photos.forEach((item,index)=>payload.append(`image_${index+1}`,item.file,item.file.name));
-      controller=new AbortController();
-      clearStatus(); setSubmitting(true);
-      try {
-        const response=await fetch(WEBHOOK_URL,{method:'POST',body:payload,mode:'cors',signal:controller.signal});
-        if (!response.ok) throw new Error('Submission failed');
-        setSubmitting(false);
-        clearImages();
-        status('Your data form has been submitted successfully.','success');
-      } catch (error) {
-        setSubmitting(false);
-        if(error?.name==='AbortError') status('Submission cancelled. Your images are still attached to this form.','info');
-        else status('We are unable to connect with the backend.','error');
-      } finally {
-        controller=null;
-      }
-    });
-    refresh();
-  </script>
-  <script type="module">
-    (async () => {
-    // The decorative scene gracefully falls back to CSS when WebGL or the CDN is unavailable.
-    const container=document.getElementById('visual');
-    const canvas=document.getElementById('threeCanvas');
-    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    try {
-      const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js');
-      const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
-      renderer.outputColorSpace=THREE.SRGBColorSpace;
-      renderer.toneMapping=THREE.ACESFilmicToneMapping;
-      const scene=new THREE.Scene();
-      const camera=new THREE.PerspectiveCamera(38,1,.1,80);
-      camera.position.set(0,.1,11.8);
-      scene.add(new THREE.AmbientLight(0xffffff,2.45));
-      const key=new THREE.DirectionalLight(0xffffff,3.2); key.position.set(-4,6,9); scene.add(key);
-      const rim=new THREE.PointLight(0x9fe0ff,70,25); rim.position.set(4,-3,5); scene.add(rim);
-      const rig=new THREE.Group(); scene.add(rig);
-      function artwork(bg1,bg2,hill,accent,variant) {
-        const cnv=document.createElement('canvas'); cnv.width=512; cnv.height=680;
-        const c=cnv.getContext('2d');
-        const g=c.createLinearGradient(0,0,450,680); g.addColorStop(0,bg1); g.addColorStop(1,bg2);
-        c.fillStyle=g; c.fillRect(0,0,512,680);
-        c.globalAlpha=.35; c.fillStyle='#ffffff';
-        c.beginPath(); c.arc(355,180,variant===1?165:116,0,Math.PI*2); c.fill();
-        c.globalAlpha=1;
-        c.fillStyle=hill; c.beginPath(); c.moveTo(0,410); c.bezierCurveTo(145,270,295,540,512,380); c.lineTo(512,680); c.lineTo(0,680); c.fill();
-        c.fillStyle=accent; c.beginPath(); c.moveTo(0,560); c.bezierCurveTo(160,450,320,690,512,490); c.lineTo(512,680); c.lineTo(0,680); c.fill();
-        c.fillStyle='rgba(255,255,255,.33)'; c.fillRect(32,34,90,3); c.fillRect(32,48,48,3);
-        const tex=new THREE.CanvasTexture(cnv); tex.colorSpace=THREE.SRGBColorSpace; return tex;
-      }
-      function roundedShape(w,h,r) {
-        const s=new THREE.Shape(); const x=-w/2,y=-h/2;
-        s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);
-        s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-        s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);
-        s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y); return s;
-      }
-      function photoCard(tint, texture,x,y,z,rz,ry) {
-        const group=new THREE.Group();
-        const frame=new THREE.Mesh(new THREE.ExtrudeGeometry(roundedShape(2.72,3.6,.15),{depth:.09,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.055,bevelThickness:.05}),
-          new THREE.MeshPhysicalMaterial({color:tint,metalness:.06,roughness:.34,clearcoat:.38}));
-        group.add(frame);
-        const front=new THREE.Mesh(new THREE.PlaneGeometry(2.51,3.38),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));
-        front.position.z=.145;group.add(front);
-        group.position.set(x,y,z);group.rotation.set(.045,ry,rz);
-        rig.add(group); return group;
-      }
-      const cards=[
-        photoCard(0xdbe5f1,artwork('#a6bdd2','#d7c6b6','#648e95','#355971',0),-1.13,.28,-1.12,-.29,-.18),
-        photoCard(0xe5d8e9,artwork('#c8b4df','#f0c7ae','#9c8db0','#605b90',1),1.06,.09,-.65,.28,.14),
-        photoCard(0xffeee3,artwork('#f5d6ac','#ecae9c','#a8a78b','#507b75',2),-.05,.05,.5,-.055,-.035)
-      ];
-      const ring=new THREE.Mesh(new THREE.TorusGeometry(3.22,.008,6,150),new THREE.MeshBasicMaterial({color:0xb4c9de,transparent:true,opacity:.21}));
-      ring.rotation.set(.25,.12,-.4);ring.position.z=-2.4; scene.add(ring);
-      let mouseX=0,mouseY=0, visible=true;
-      const visualParent=container.closest('.showcase');
-      visualParent.addEventListener('pointermove',e=>{
-        if(reduce)return;
-        const b=visualParent.getBoundingClientRect();
-        mouseX=(e.clientX-b.left)/b.width-.5;mouseY=(e.clientY-b.top)/b.height-.5;
-      },{passive:true});
-      visualParent.addEventListener('pointerleave',()=>{mouseX=0;mouseY=0;});
-      function resize() {
-        const w=Math.max(1,container.clientWidth),h=Math.max(1,container.clientHeight);
-        renderer.setSize(w,h,false);camera.aspect=w/h;
-        camera.position.z=w<350?8.8:w<510?9.5:11.8;
-        camera.updateProjectionMatrix();
-      }
-      const observer=new ResizeObserver(resize);observer.observe(container);resize();
-      const visibility=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting??true;},{threshold:.01});visibility.observe(visualParent);
-      container.classList.add('webgl-ready');
-      let t=0, last=0;
-      function frame(ms) {
-        requestAnimationFrame(frame);
-        if(!visible || document.hidden)return;
-        if(reduce && last)return;
-        const delta=Math.min(50,ms-last||16);last=ms;t+=delta*.001;
-        rig.rotation.y+=(mouseX*.23-rig.rotation.y)*.045;
-        rig.rotation.x+=(-mouseY*.12-rig.rotation.x)*.045;
-        if(!reduce) {
-          cards[0].position.y=.28+Math.sin(t*.78)*.075;
-          cards[1].position.y=.09+Math.sin(t*.85+2)*.075;
-          cards[2].position.y=.05+Math.sin(t*.9+4)*.075;
-          ring.rotation.z=-.4+t*.035;
-        }
-        renderer.render(scene,camera);
-      }
-      requestAnimationFrame(frame);
-    } catch (_) {
-      canvas.setAttribute('aria-hidden','true');
-      // A designed static image remains visible; the rest of the form works offline.
-    }
-    })();
-  </script>
+    bottom.append(name, remove); card.append(picture, bottom); grid.append(card);
+  });
+}
+function addImages(files) {
+  if (sending) return;
+  const warnings = [];
+  for (const file of files) {
+    if (!ALLOWED_TYPES.has(file.type)) { warnings.push(file.name + ': unsupported image format'); continue; }
+    if (images.some(e => e.file.name === file.name && e.file.size === file.size && e.file.lastModified === file.lastModified)) continue;
+    if (images.length >= MAX_FILES) { warnings.push('Maximum 20 images per submission'); break; }
+    if (totalBytes() + file.size > MAX_BYTES) { warnings.push(file.name + ': total exceeds 14 MB'); continue; }
+    images.push({ file, url: URL.createObjectURL(file) });
+  }
+  drawImages(); refresh();
+  if (warnings.length) status(warnings.join('\n'), 'error'); else clearStatus();
+}
+function clearImages() {
+  images.forEach(e => URL.revokeObjectURL(e.url));
+  images = []; fileInput.value = '';
+  drawImages(); refresh();
+}
+fileInput.addEventListener('change', event => { addImages(Array.from(event.target.files)); fileInput.value = ''; });
+$('clearBtn').addEventListener('click', () => { clearImages(); clearStatus(); });
+const zone = $('dropzone');
+for (const name of ['dragenter','dragover']) zone.addEventListener(name, e => { e.preventDefault(); if (!sending) zone.classList.add('dragging'); });
+for (const name of ['dragleave','drop']) zone.addEventListener(name, e => { e.preventDefault(); zone.classList.remove('dragging'); });
+zone.addEventListener('drop', e => { if (!sending) addImages(Array.from(e.dataTransfer.files)); });
+$('cancelBtn').addEventListener('click', () => controller?.abort());
+$('uploadForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (sending) return;
+  if (!selectedDistrict() || !selectedMandal()) { status('कृपया जिला और मंडल चुनें।', 'error'); return; }
+  if (!images.length) { status('कम से कम एक फ़ोटो चुनें।', 'error'); return; }
+  if (totalBytes() > MAX_BYTES) { status('14 MB से कम कुल image size रखें।', 'error'); return; }
+  let url;
+  try {
+    url = new URL($('webhook').value.trim());
+    if (!(url.protocol === 'https:' || (url.protocol === 'http:' && ['localhost','127.0.0.1'].includes(url.hostname)))) throw Error('HTTPS URL required');
+  } catch { status('Valid HTTPS n8n Webhook URL दर्ज करें।', 'error'); return; }
+  const data = new FormData();
+  // All district and mandal values AND field names are in English.
+  data.append('district', districtSelect.value);
+  data.append('mandal', mandalSelect.value);
+  data.append('image_count', String(images.length));
+  data.append('submitted_at', new Date().toISOString());
+  images.forEach((entry, index) => data.append(`image_${index + 1}`, entry.file, entry.file.name));
+  sending = true; controller = new AbortController();
+  districtSelect.disabled = true; mandalSelect.disabled = true; fileInput.disabled = true; $('webhook').disabled = true;
+  zone.classList.add('disabled'); $('cancelBtn').hidden = false; $('sendBtn').textContent = 'Sending…';
+  drawImages(); refresh(); status('तस्वीरें n8n webhook पर भेजी जा रही हैं…', 'info');
+  try {
+    // Do NOT set Content-Type: fetch creates the multipart boundary automatically.
+    const response = await fetch(url.href, { method: 'POST', body: data, mode: 'cors', signal: controller.signal });
+    const body = await response.text();
+    if (!response.ok) throw new Error(`HTTP ${response.status}${body ? ' — ' + body.slice(0, 240) : ''}`);
+    clearImages();
+    status('✓ n8n webhook ने request स्वीकार कर ली। ImageKit processing n8n workflow में होगी।', 'success');
+  } catch (error) {
+    if (error.name === 'AbortError') status('Request cancelled. Your selected images are still here.', 'info');
+    else if (error instanceof TypeError) status('Connection failed. Check n8n URL, workflow activation and CORS settings. If needed, host this HTML on HTTPS or localhost.', 'error');
+    else status('Upload failed: ' + error.message, 'error');
+  } finally {
+    sending = false; controller = null;
+    districtSelect.disabled = false; mandalSelect.disabled = !districtSelect.value; fileInput.disabled = false; $('webhook').disabled = false;
+    zone.classList.remove('disabled'); $('cancelBtn').hidden = true; $('sendBtn').textContent = 'Send Images to n8n';
+    drawImages(); refresh();
+  }
+});
+refresh();
+</script>
 </body>
 </html>
